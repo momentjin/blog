@@ -1,5 +1,3 @@
-String VS StringBuilder VS StringBuffer
-
 # Java String에 대한 고찰
 > 자주 사용하는 데이터 타입인 String에 대한 몇 가지 궁금증을 해소하고자 이 글을 작성했습니다.
 
