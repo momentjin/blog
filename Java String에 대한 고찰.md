@@ -3,22 +3,14 @@ String VS StringBuilder VS StringBuffer
 # Java String에 대한 고찰
 > 자주 사용하는 데이터 타입인 String에 대한 몇 가지 궁금증을 해소하고자 이 글을 작성했습니다.
 
+
 ## String ?
 
-String 클래스는 문자열을 표현하는 용도로 사용됩니다.
+String은 문자열을 표현하는 용도로 사용되는 Class입니다.
 
-Java의 데이터타입은 크게 원시타입(primitive type)과 참조타입(reference type)으로 나뉘는데, String은 참조타입에 해당하는 Class Type의 데이터타입입니다. 따라서 모든 문자열 데이터는 String 클래스의 인스턴스라고 볼 수 있습니다.
+Java의 데이터타입은 크게 원시타입(primitive type)과 참조타입(reference type)으로 나뉘는데, String은 참조타입에 해당하는 Class Type입니다. 따라서 모든 문자열 데이터는 String 클래스의 인스턴스라고 볼 수 있습니다.
 
 또한, String은 클래스이므로 이에 대한 여러가지 행위를 메소드로 표현할 수 있습니다. 대표적으로 split, replace 등의 메소드가 이에 해당합니다.
-
-
-## String str1 = "test" VS String str2 = new String("test");
-
-> Java에 입문할 때, 위 2가지 표현식의 차이점이 뭔지 한 번은 질문합니다.
-
-전자는 heap에 "test"라는 데이터가 존재하면 이 데이터를 참조(공유)하는 것입니다. 후자는 heap에 "test"가 있든 없든간에 heap에 또 생성합니다. 그러면 같은 데이터(test)를 갖고 있더라도, 서로 참조하고 있는 주소값이 다르기 때문에 전혀 다르게 됩니다.
-
-처음엔, 아 그렇구나~ 하며 넘어갔는데 이제와서 생각해보니 왜 이렇게 헷갈리게 만들어놨는지 참 궁금해서 알아봤습니다.
 
 
 ## String VS StringBuilder, StringBuffer
@@ -47,7 +39,7 @@ String이 불변 객체인 이유
 
 앞서 말씀드렸듯이 + 연산은 String 객체를 생성하기 때문에 Builder나 Buffer를 사용해야 합니다. 근데 이게 뭘 어떻게 하길래 +연산도 안하고 문자열도 수정할 수 있는지 궁금했습니다.
 
-StringBuilder가 상속받는 AbstractStringBuilder 추상 클래스는 기본적으로 character type의 array를 문자열을 담는 그릇으로 사용합니다. 그래서 수정할 수 있었습니다. 아래 코드를 참고하시면 쉽게 이해할 수 있습니다.
+StringBuilder가 상속받는 AbstractStringBuilder 추상 클래스는 기본적으로 character type의 array 멤버변수가 존재합니다. 이 array를 조작해서 값을 수정하는 것입니다. 아래 코드는 String 문자열 중 특정 위치의 값을 변경하는 setCharAt 메소드입니다. 이 메소드를 참고하시면 StringBuilder는 왜 새로운 객체를 생성하지 않고, 값을 변경할 수 있는지 쉽게 이해할 수 있을 것 같습니다.
 
 ```java
 abstract class AbstractStringBuilder implements ... {
@@ -66,9 +58,6 @@ abstract class AbstractStringBuilder implements ... {
 ```
 
 
-
-
-
 ## 후기
 
-군대에서 복무했을 때, 부소초장님께서 원래라는 건 없다고 말씀해주셨습니다. 그 말씀이 오늘따라 더욱 와닿는 것 같습니다.
+군대에서 복무했을 때, 부소초장님께서 원래라는 건 없다고 말씀해주셨습니다. String의 불변성도 처음엔 그냥 당연히 여겼었는데 찾아보니 참 많은 이유가 있었음을 알 수 있었습니다. 그 말씀이 오늘따라 더욱 와닿는 것 같습니다.
