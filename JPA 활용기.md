@@ -29,7 +29,7 @@ JPA는 Query 결과를 알아서 객체에 맵핑합니다. MyBatis 처럼 복�
 우선 ERD를 그리며 데이터베이스 설계 작업을 한 뒤, 각각의 테이블을 Java Object로 Mapping하는 작업을 수행했습니다. JPA는 Table을 자동으로 생성하는 기능이 있기 때문에 이렇게 안해도 됩니다. 하지만 데이터베이스를 설계하고 구현하는 일도 개발자에게 필요한 역량이라고 생각합니다.
 
 1. 아래와 같이 먼저 ERD를 그린 후, Schema를 생성했습니다.
-![ERD](./image/ERD.PNG)
+![ERD](./resource/image/ERD.PNG)
 
 2. Coverletter Schema를 Java Object에 맵핑했습니다. Coverletter는 Member N:1 관계이고, Question과 1:N 관계입니다.
     ```java
