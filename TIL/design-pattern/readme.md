@@ -6,6 +6,7 @@
 - [Strategy pattern](./strategy-pattern.md)
 - [Decorator pattern](./decorator-pattern.md)
 - [Observer pattern](./observer-pattern.md)
+- [Factory pattern](./factory-pattern.md)
 
 ## Reference
 - Head First Design Patterns
