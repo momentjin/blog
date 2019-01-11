@@ -3,6 +3,8 @@
 
 
 ## List
+- [Strategy pattern](./strategy-pattern.md)
+- [Decorator pattern](./decorator-pattern.md)
 - [Observer pattern](./observer-pattern.md)
 
 ## Reference
