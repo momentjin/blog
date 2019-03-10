@@ -8,9 +8,9 @@ Subject는 특정 이벤트가 발생하면 자신에게 등록된 Observer들�
 
 ## UML
 ![uml](../../resource/image/uml-observer.PNG)
-> Subject : Observer에게 데이터가 변경되었음을 알리는 주체
-> IObserver : Observer Interface
-> ConcreteObserver : IObserver의 구현체
+- Subject : Observer에게 데이터가 변경되었음을 알리는 주체
+- IObserver : Observer Interface
+- ConcreteObserver : IObserver의 구현체
 
 ## 실제 예시
 Observer Pattern은 event 처리에서 많이 볼 수 있다. 예를 들어 Java Swing의 JButton 클래스를 보면, Listener를 등록/수정할 수 있는 메소드를 볼 수 있다. 이 때 Button 클래스는 Subject가 되고, 등록한 Listener가 Observer 클래스의 이벤트가 된다. 

@@ -12,10 +12,10 @@
 
 Java를 사용하는 개발자라면, 한번 쯤은 Arrays.sort() API를 사용한 경험이 있을 것이다. Arrays.sort()의 두 번째 아규먼트로 비교 전략을 주입할 수 있는데 이것이 바로 Strategy Pattern을 적용한 것이다.
 
-java
-```
-// 2번째 아규먼트를 익명 클래스로 구현하지 않고, Comparator를 구현한 클래스를 여러 개 만들어놓고 상황에 따라 주입해서 사용해도 된다.
 
+```java
+// 2번째 아규먼트를 익명 클래스로 구현하지 않고
+// Comparator를 구현한 클래스를 여러 개 만들어놓고 상황에 따라 주입해서 사용해도 된다.
 Arrays.sort(anyList, new Comparator<Object>() {
     @Override
     public int compare(Object o1, Object o2) {
