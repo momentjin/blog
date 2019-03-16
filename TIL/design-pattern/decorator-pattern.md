@@ -3,13 +3,13 @@
 
 ## UML
 ![uml](../../resource/image/uml-decorator.PNG)
-> Component: 최상위 클래스 <br>
-> ConcreteComponent: Component 클래스를 상속한 클래스
-> Decorator : Component를 확장하기 위한 추상 클래스
-> ConcreateDecorator : Component를 확장한 클래스
+- Component: 최상위 클래스
+- ConcreteComponent: Component 클래스를 상속한 클래스
+- Decorator : Component를 확장하기 위한 추상 클래스
+- ConcreateDecorator : Component를 확장한 클래스
 
 ## 실제 예시
-Java의 Stream API는 Decorator Pattern을 적용한 대표적인 예제이다. stackoverflow에 좋은 예제가 있어서 가져왔다. (출처 https://stackoverflow.com/questions/6366385/use-cases-and-examples-of-gof-decorator-pattern-for-io)
+Java의 Stream API는 Decorator Pattern을 적용한 대표적인 예제이다. stackoverflow에 [좋은 예제](https://stackoverflow.com/questions/6366385/use-cases-and-examples-of-gof-decorator-pattern-for-io)가 있어서 가져왔다.
 
 같은 InputStream을 상속한 Stream 클래스지만, 이렇게 하나의 클래스를 또 다른 클래스로 감싸면서 기능을 확장할 수 있다.
 

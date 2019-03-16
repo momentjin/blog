@@ -4,9 +4,9 @@
 ## UML
 
 ![uml](../../resource/image/uml-strategy.PNG)
-> Client: 전략을 사용하는 클래스 <br>
-> IStratege: 행위의 인터페이스 <br>
-> ConcreteStrategy: 인터페이스 구현체
+- Client: 전략을 사용하는 클래스
+- IStratege: 행위의 인터페이스
+- ConcreteStrategy: 인터페이스 구현체
 
 ## 실제 예시
 
