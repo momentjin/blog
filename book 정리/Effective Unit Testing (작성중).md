@@ -135,10 +135,129 @@ public void missingArgument() {
 }
 ```
 
-### 쪼개진 논리
+#### 쪼개진 논리
 테스트의 범위나 목적을 명확히 하기 위해 메소드 등을 과하게 분리한 상황을 말한다. 보통 테스트 클래스나 메소드를 작게 나누면 가독성이나 유지보수성이 좋아진다. 하지만, 의미없고 무분별하게 나누는 것은 오히려 해당 테스트를 더욱 파악하기 어렵게 만든다.
 
 > 테스트를 분리하거나 통합하는 경계는 책을 읽어도 깨닫기 어렵다. 하지만 분리가 가독성을 보장하지 않는다는 사실을 꼭 기억하고 싶어서 정리했다. 테스트를 의미있게 분리하는 연습을 해야겠다.
 
+<br>
 
+### 유지보수성
+매번 언급하는게 맞나 싶을 정도로 지겹지만, 테스트코드 또한 코드라는 사실. 따라서 관리하지 않으면 향후 테스트 코드의 유지보수성이 떨어진다. 이번 파트에서는 유지보수성을 위협하는 다양한 원인을 알아본다.
 
+#### 중복
+중복은 `불필요한 반복`이다. 따라서 중복이 많으면, 유지보수하기 매우 어렵다.
+
+일부러 중복을 남겨야 하는 상황도 있다. (지금은 와닿지는 않는다.)
+
+중복의 종류는 크게 3가지
+- 상수 중복 : 하드코딩 등..
+- 구조 중복 : 유사한 로직 등..
+- 의미 중복 : 같은 기능이나 개념을 서로 다른 방식으로 구현해서 발생하는 중복
+
+상수중복과 구조중복은 단순히 문자열이나 로직의 중복을 뜻하고, 의미 중복은 예시로 정리해봤다. (사실 이 책의 저자가 남겨놓은 과제다)
+ 
+```java
+// 의미가 중복되는 2개의 테스트 메소드
+// 특정 기준으로 직원을 필터링 하는 기능을 서로 다른 방식으로 구현했다. 
+
+public void 그룹은_2명의_감독관을_포함해야_한다() {
+    List<Employee> all = group.list();
+    List<Employee> employees = new ArrayList<>(all);
+    Iterator<Employee> i = employees.iterator();
+    while (i.hasNext()) {
+        Employee employee = i.next();
+        if (!employee.isSupervisor()) i.remove();
+    }
+
+    assertEquals(2, employees.size());
+}
+
+public void 그룹은_5명의_신입사원을_포함해야_한다() {
+    List<Employee> newcomers = new ArrayList<>();
+    for (Employee employee : group.list()) {
+        DateTime oneYearAgo = DateTime.now().minusYear(1);
+        if (employee.startingDate().isAfter(oneYearAgo)) {
+            newcomers.add(employee);
+        }
+    }
+
+    assertEquals(5, employees.size());
+}
+```
+
+```java
+// 의미 중복을 제거하는 순서
+// 1. 구조 중복으로 번경한다.
+// 2. 구조 중복을 개선한다.
+
+// 구조 중복으로 변경한 테스트 메소드
+// 필터링 대상을 저장할 변수를 선언하고, 루프를 돌며 조건부 필터링하는 로직이 같다. (즉, 조건만 다르다)
+public void 그룹은_2명의_감독관을_포함해야_한다() {
+    List<Employee> supervisors = new ArrayList<>();
+    for (Employee employee : group.list()) {
+        if (employee.isSupervisor()) {
+            supervisors.add(employee);
+        }
+    }
+
+    assertEquals(2, supervisors.size());
+}
+
+public void 그룹은_5명의_신입사원을_포함해야_한다() {
+    List<Employee> newcomers = new ArrayList<>();
+    for (Employee employee : group.list()) {
+        DateTime oneYearAgo = DateTime.now().minusYear(1);
+        if (employee.startingDate().isAfter(oneYearAgo)) {
+            newcomers.add(employee);
+        }
+    }
+
+    assertEquals(5, newcomers.size());
+}
+```
+
+```java
+// 구조 중복을 개선한 테스트 코드 (직접 작성)
+// 위에서 설명한 조건을 파라미터(Predicate)로 넘겨 처리했다.
+@Test
+public void 그룹은_2명의_감독관을_포함해야_한다() { 
+    assertMemberNumInGroup(2, employee -> employee.isSupervisor());
+}
+
+@Test
+public void 그룹은_5명의_신입사원을_포함해야_한다() { 
+    DateTime oneYearAgo = DateTime.now().minusYear(1);
+    assertMemberNumInGroup(5, employee -> employee.startingDate().isAfter(oneYearAgo);
+}
+
+// util method
+private int assertMemberNumInGroup(int n, Predicate<Employee> isMatch) {
+    List<Employee> members = new ArrayList<>();
+    for (Employee employee : group.list()) {
+        if (isMatch.test(employee)) {
+            members.add(employee);
+        }
+    }
+
+    assertEquals(members.size(), n);
+}
+```
+
+#### 조건부 로직
+
+#### 양치기 테스트
+
+#### 파손된 파일 경로
+
+#### 끈질긴 임시 파일
+
+#### 잠자는 달팽이
+
+#### 픽셀 퍼펙션
+
+#### 파라미터화 된 혼란
+
+#### 메소드 간 응집력 결핍
+
+#### 
