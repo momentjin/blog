@@ -2,8 +2,10 @@
 > 한빛미디어, 라쎄 코스켈라 지음, 이복연 옮김
 
 #### 이 책을 읽은 이유
-테스트의 'ㅌ'도 몰라서 이번에 확실하게 익히고자 이 책을 읽었습니다. 중요하다고 생각하는 부분을 정리했고, 너무 당연하거나 불필요한 내용은 뺐습니다. 참고해주세요!
+테스트의 'ㅌ'도 몰라서 이번에 확실하게 익히고자 이 책을 읽었습니다. 이 책을 모두 읽고 정리하는데로, 개인 프로젝트에 작성했던 테스트 코드를 개선해보려고 합니다.
 
+중요하다고 생각하는 부분을 정리했고, 너무 당연하거나 불필요한 내용은 뺐습니다. 참고해주세요!
+ 
 ## Part1. 기반 다지기
 
 ### 테스트의 가치
@@ -245,19 +247,75 @@ private int assertMemberNumInGroup(int n, Predicate<Employee> isMatch) {
 ```
 
 #### 조건부 로직
+테스트 코드에 조건에 따라 단정하는 상황을 말한다. 말보다 코드를 보는게 더 빠르겠다.
+
+```java
+// 딕셔너리에 키,값을 넣고 딕셔너리를 순회하며 넣었던 값이 존재하는지 찾는 테스트
+public class DictionaryTest {
+
+    @Test
+    public void returnsAnIteratorForContents() throws Exception {
+        Dictionary Dict = new Dictionary();
+        dict.add("A", new Long(3));
+        dict.add("B", "21");
+
+        for (Iterator e = dict.iterator(); e.hasNext();) {
+            Map.Enty entry = (Map.Entry) e.next();
+            if ("A".eqauls(entry.getKey()))
+                assertEquals(3L, entry.getValue());
+
+            if ("B".equals(entry.getKey()))
+                assertEquals("21", entry.getValue());
+        }
+    }
+}
+```
+
+위 코드에는 총 2개의 조건부 로직이 존재한다. 언뜻 보면 크게 문제되지 않는 것 같다. 저자는 이 테스트의 목적이 명확하게 드러나지 않았다고 지적했다. 그리고 아래와 같이 이러한 조건부 로직을 간소화할 수 있는 방법을 소개했다. (많이 쓰이는 패턴이라고 강조하셨다!!)
+
+```java
+public class DictionaryTest {
+
+    // 조건부로직을 별도의 메소드로 추출했다. -> 테스트 목적이 분명해졌다.
+    @Test
+    public void returnsAnIteratorForContents() throws Exception {
+        Dictionary Dict = new Dictionary();
+        dict.add("A", new Long(3));
+        dict.add("B", "21");
+        
+        assertContains(dict.iterator(), "A", 3L);
+        assertContains(dict.iterator(), "B", "21");
+    }
+
+    private void assertContains(Iterator i, Object key, Object value) {
+        while (i.hasNext()) {
+            Map.Enty entry = (Map.Entry) e.next();
+            if (key.eqauls(entry.getKey())) {
+                assertEquals(value, entry.getValue());
+            }
+        }
+
+        // 비어있는 Iterator 또는 조건에 맞지 않았을 때 실패 처리.
+        // 은근히 깜빡하는 경우가 많다고 한다
+        fail("Iterator didn't contain key, value");
+    }
+}
+```
 
 #### 양치기 테스트
+어떤 경우에는 성공하지만, 어떤 경우에는 실패하는 테스트를 말한다.
+간헐적 결과를 낳는 테스트는 신뢰성이 없고, 테스트가 실패했을 때 원인 파악도 어려워 유지보수를 힘들게 만든다.
+
+난수, 시스템 시계, 쓰레드, 공유자원에 대한 동시접근 등이 주 원인이다. 저자는 이것에 대한 해결방법으로 문제가 되는 대상을 `회피`하거나, `제어`하거나, `격리`하라고 조언했다. 
+
+양치기 테스트 상황에 직면했을 때, 불규직적인 상황을 최대한 컨트롤할 수 있는 로직을 작성하자. 
 
 #### 파손된 파일 경로
+절대 경로, 특정 운영체제에서만 사용가능한 경로 등을 사용했을 때 나타나는 문제다. 테스트를 작성한 개발자의 컴퓨터에선 잘 동작하겠지만, 다른 컴퓨터에선 동작하지 않을 수 있다.
 
-#### 끈질긴 임시 파일
+-> 프로젝트 루트 내 파일을 두고, 상대경로로 참조하면 해결할 수 있다.
 
 #### 잠자는 달팽이
+동시성 테스트든 뭐든, Thread.sleep()을 쓰는 것은 낭비다. 전체 테스트 슈트를 수행할 때 피드백을 받는 시간이 느려 작업 효율이 떨어지기 때문이다.
 
-#### 픽셀 퍼펙션
-
-#### 파라미터화 된 혼란
-
-#### 메소드 간 응집력 결핍
-
-#### 
+동시성을 제어할 수 있는 방법을 찾고 해결해야 한다. 자바의 경우 java.util.concurrent를 사용해 동시성을 제어할 수 있다고 한다. (안써봐서 잘 모르겠다..)
