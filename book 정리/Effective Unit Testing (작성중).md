@@ -102,6 +102,7 @@ public void test() {
 
 ```java
 // 개선 전
+@Test
 public void testParsingCommandLineArgs() {
     String args[] = { "-f", "hello.txt", "-v", "--version" };
     Configuration c = new Configuration();
@@ -121,6 +122,7 @@ public void testParsingCommandLineArgs() {
 
 // 개선 후
 // 메소드명이 훨씬 더 명확해져서 테스트 목적을 파악하기 쉬워졌다.
+@Test
 public void validArgumentsProvided() {
     String args[] = { "-f", "hello.txt", "-v", "--version" };
     Configuration c = new Configuration();
@@ -132,6 +134,7 @@ public void validArgumentsProvided() {
     assertTrue(c.shouldShowVersion());
 }
 
+@Test(expected=InvalidArgumentException.class)
 public void missingArgument() {
     c.processArguments(new String[] {"-f"});
 }
