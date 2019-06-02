@@ -11,11 +11,11 @@
 # 문제 & 해결
 
 ## 1. 테스트 클래스 이름 문제
-![패키지 트리](./resource/image/테스트코드리팩토링_1.png)
+<img src="./resource/image/테스트코드리팩토링_1.png" height='300px'>
 
 테스트 클래스 이름을 위와 같이 만들었습니다. 겉보기에 뭘 테스트하는지 유추는 어느 정도 가능해 보입니다만, 이렇게 했을 때 아래와 같은 문제점이 있었습니다.
 
-![테스트 결과](./resource/image/테스트코드리팩토링_2.png)
+<img src="./resource/image/테스트코드리팩토링_2.png" height='200px'>
 
 어떤 테스트가 성공했는지, 실패했는지, 시간은 얼마나 걸렸는지 분별하기 힘듭니다. domain package 안에 service, repository가 공통적으로 있으니 오히려 domain+ServiceTest와 같이 네이밍하는 것이 번거롭다고 생각했었습니다. 하지만 테스트 결과 분석이 겉보기에 어렵다는 것을 알 수 있습니다.
 
@@ -67,7 +67,7 @@ INSERT INTO question
 
 이제 application을 실행하고, 데이터베이스를 확인할 차례입니다. 잘 저장되었습니다 :)
 
-![결과](./resource/image/테스트코드리팩토링_3.png)
+<img src="./resource/image/테스트코드리팩토링_3.png" height='50px'>
 
 이제 테스트를 위해 필요한 데이터가 마련되었으므로, 불필요한 로직을 제거할 수 있습니다! 테스트 클래스마다 존재했던 memberService bean과 TestObjectUtils 클래스를 제거했습니다.
 
