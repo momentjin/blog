@@ -64,8 +64,57 @@ for 루프는 언박싱/박싱을 수행하지 않는다. 반면, 스트림은 �
 - findFirst(), findAny() 함수는 비슷한 동작을 수행하지만, 병렬 스트림에서 차이가 있다. 병렬 스트림에서는 첫 번째 요소를 찾는 것이 어렵다 (작업 데이터를 분할해서 처리하므로).  반면에 아무거나 1개를 찾는 건 쉽다. 따라서 병렬 스트림에서는 findAny() 함수를 사용하는 것이 성능 측면에서 더 낫다.
 
 
-### 디폴트 메소드
+### 기존의 Java는 인터페이스 설계를 변경하기 어려웠다. 
 기존 Java는 인터페이스의 추상 메소드를 수정하면, 해당 인터페이스를 구현한 모든 클래스도 함께 수정했어야 했다. 하지만 Java8에서 제공하는 디폴트 메소드를 사용하면, 기존 구현 클래스를 수정하지 않고 인터페이스를 수정할 수 있다. 또한 기존의 구현 클래스는 디폴트 메소드를 그대로 상속 받는다.
 
+
+### 기존의 Java는 null인 상황을 처리할 명시적인 방법이 없었다.
+우선 기존 Java의 null 처리 방법을 살펴보자. 한 눈에 봐도 코드 구조가 지저분하고, 가독성도 떨어짐을 알 수 있다.
+
+```java
+// 1. 깊은 의심
+public String getCarInsuranceName(Person person) {
+    if (person != null) {
+        Car car = person.getCar();
+        if (car != null) {
+            Insurance insurance = car.getInsurance();
+            if (insurance != null) {
+                return insurance.getName();
+            }
+        }
+    }
+
+    return "unknown";
+}
+
+// 2. 너무 많은 출구
+public String getCarInsuranceName(Person person) {
+    if (person == null)
+        return "unknown";
+    
+    Car car = person.getCar();
+    if (car == null)
+        return "unknown";
+
+    Insurance insurance = car.getInsurance();
+    if (insurance == null)
+        return "unknown";
+
+    return insurance.getName(); 
+}
+```
+
+Java 8에서는 null인 상황을 처리할 수 있는 명시적인 방법을 제공한다. 바로 Optional&lt;T&gt; 이다. 다음 코드는 위 예제를 Optional로 해결한 코드다. 
+
+```java
+public String getCarInsuranceName(Optional<Person> person) {
+    return person.flatMap(Person::getCar)
+                .flatMap(Car::getInsurance)
+                .map(Insurance::getName)
+                .orElse("unknown")
+}
+```
+
+이전 코드에 비해 가독성이 좋아졌다. 또한 Optional을 사용함으로써 인자로 주어진 person 객체가 있을 수도 있고, 없을 수도 있다는 사실을 알렸다. 즉, 명시적으로 null일 수 있다는 상황을 정의했다.
 
 
