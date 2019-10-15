@@ -12,7 +12,6 @@
 따라서 디자인 패턴을 배우는 것은 유지보수성이 높은 소프트웨어를 설계할 수 있는 기반을 마련하는 것과 같습니다. 그래서 배웁니다.
 
 ## Index
-[학습여부]
 - [Strategy pattern](./strategy-pattern.md)
 - [Decorator pattern](./decorator-pattern.md)
 - [Observer pattern](./observer-pattern.md)
@@ -24,5 +23,9 @@
 - Template Method pattern
 - Iterator Pattern
 - Composite Pattern
-- State Pattern
+- [State Pattern](./state-pattern.md)
 - [Proxy Pattern](./proxy-pattern.md)
+
+## 참고
+
+Head First Desgin Patterns
