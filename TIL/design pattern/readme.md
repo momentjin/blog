@@ -20,7 +20,7 @@
 - Factory Pattern
 - Adapter Pattern
 - Pacade Pattern
-- Template Method pattern
+- [Template Method pattern](./template%20method-pattern.md)
 - Iterator Pattern
 - Composite Pattern
 - [State Pattern](./state-pattern.md)
