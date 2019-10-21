@@ -18,8 +18,7 @@
 - [Command pattern](./command-pattern.md)
 - Singleton Pattern
 - Factory Pattern
-- Adapter Pattern
-- Pacade Pattern
+- [Adapter Pattern](./adapter-pattern.md)
 - [Template Method pattern](./template%20method-pattern.md)
 - Iterator Pattern
 - Composite Pattern
