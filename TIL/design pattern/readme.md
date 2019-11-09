@@ -20,7 +20,7 @@
 - Factory Pattern
 - [Adapter Pattern](./adapter-pattern.md)
 - [Template Method pattern](./template%20method-pattern.md)
-- Iterator Pattern
+- [Iterator Pattern](./iterator-pattern.md)
 - Composite Pattern
 - [State Pattern](./state-pattern.md)
 - [Proxy Pattern](./proxy-pattern.md)
