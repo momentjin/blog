@@ -21,10 +21,9 @@
 - [Adapter Pattern](./adapter-pattern.md)
 - [Template Method pattern](./template%20method-pattern.md)
 - [Iterator Pattern](./iterator-pattern.md)
-- Composite Pattern
 - [State Pattern](./state-pattern.md)
 - [Proxy Pattern](./proxy-pattern.md)
 
 ## 참고
 
-Head First Desgin Patterns
+Head First Design Patterns
