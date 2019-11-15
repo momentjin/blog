@@ -16,8 +16,7 @@
 - [Decorator Pattern](./decorator-pattern.md)
 - [Observer Pattern](./observer-pattern.md)
 - [Command Pattern](./command-pattern.md)
-- Singleton Pattern
-- Factory Pattern
+- [Factory Pattern](./factory-pattern.md)
 - [Adapter Pattern](./adapter-pattern.md)
 - [Template Method Pattern](./template%20method-pattern.md)
 - [Iterator Pattern](./iterator-pattern.md)
