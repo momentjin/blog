@@ -99,7 +99,7 @@ class GithubOrderConfirmRequest implements OrderConfirmRequest {
 
 ## 일반적인(?) 다이어그램
 
-![uml](../../resource/image/uml-adapter.PNG)
+![uml](../../resource/image/uml-adapter.png)
 
 위 다이어그램은 책이나, 인터넷에서 쉽게 볼 수 있는 Adapter Pattern의 다이어그램입니다. 클라이언트는 Adapter를 구현한 이식할 대상(Target)을 호출해서 사용합니다. Target에 구성된 Adapter는 Adaptee의 메소드를 대신 호출합니다. 
 
