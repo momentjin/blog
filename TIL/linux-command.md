@@ -3,7 +3,7 @@
 
 
 ## Shell vs Terminal
-궁금에서 찾아봤습니다 :)
+궁금해서 찾아봤습니다 :)
 - Shell : 명령어 해석기
 - Terminal : 명령어를 입력하고 출력하는 환경
 
