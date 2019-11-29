@@ -2,7 +2,7 @@
 > 객체에 책임을 덧붙이는 패턴으로, 객체의 기능 확장이 필요할 때 상속보다 더 유연한 대안을 제공한다. 
 
 ## UML
-![uml](../../resource/image/uml-decorator.PNG)
+![image](https://raw.githubusercontent.com/momentjin/study/master/resource/image/uml-decorator.PNG)
 - Component: 최상위 클래스
 - ConcreteComponent: Component 클래스를 상속한 클래스
 - Decorator : Component를 확장하기 위한 추상 클래스

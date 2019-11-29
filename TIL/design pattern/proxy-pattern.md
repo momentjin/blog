@@ -8,7 +8,7 @@ Proxy의 종류는 원격, 보호, 가상, 캐싱, 동기화, 지연 등으로 �
 
 ## 보호 Proxy
 
-<img src="../../resource/image/uml-proxy.png" height='300px'>
+<img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/uml-proxy.png" height='300px'>
 
 일반적인 프록시 패턴의 클래스 다이어그램은 위와 같습니다. 보시면 알겠지만, 실제 객체(RealSubject)의 행위를 프록시가 대신하고, 클라이언트는 실제 객체 대신 프록시 객체를 호출하는 구조입니다. 그렇다면 왜 이렇게 귀찮은 방법까지 써가면서 이런 것을 해야되는지 의문을 품어볼만 합니다.
 

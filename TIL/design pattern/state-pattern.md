@@ -115,7 +115,7 @@ class Printer {
 
 ## 다이어그램
 
-<img src="../../resource/image/uml-state.png">
+<img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/uml-state.png" height='300px'>
 
 
 ## 정리

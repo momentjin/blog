@@ -2,8 +2,8 @@
 > 알고리즘군을 정의하고 각각을 캡슐화하여 교환해서 사용할 수 있도록 만든다. 이 패턴을 활용하면 알고리즘을 사용하는 클라이언트와는 독립적으로 알고리즘을 변경할 수 있다.
 
 ## UML
+![uml](https://raw.githubusercontent.com/momentjin/study/master/resource/image/uml-strategy.PNG)
 
-![uml](../../resource/image/uml-strategy.PNG)
 - Client: 전략을 사용하는 클래스
 - IStratege: 행위의 인터페이스
 - ConcreteStrategy: 인터페이스 구현체

@@ -70,8 +70,7 @@ public final class TextFileConverter extends CoverletterConverter {
 ```
 
 ## 다이어그램으로 다시 보자
-
-<img src="../../resource/image/uml-template-method.png">
+![uml](https://raw.githubusercontent.com/momentjin/study/master/resource/image/uml-template-method.png)
 
 위 다이어그램에서 하위 클래스인 TextFileConverter와 ExcelConverter는 모두 `parseQuestions()` 메소드를 재정의하고 있습니다. 각 파일 타입마다 읽는 방식이 다르기 때문입니다.
 

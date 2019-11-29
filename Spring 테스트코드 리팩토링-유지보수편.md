@@ -28,11 +28,12 @@ Java 실무 경험이 없고, 책이나 웹을 통해 학습한 수준이라 미
 # 문제 & 해결
 
 ## 1. 테스트 클래스 이름 문제
-<img src="./resource/image/테스트코드리팩토링_1.png" height='300px'>
+
+<img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/테스트코드리팩토링_1.png" height='300px'>
 
 테스트 클래스 이름을 위와 같이 만들었습니다. 겉보기에 뭘 테스트하는지 유추는 어느 정도 가능해 보입니다만, 이렇게 했을 때 아래와 같은 문제점이 있었습니다.
 
-<img src="./resource/image/테스트코드리팩토링_2.png" height='200px'>
+<img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/테스트코드리팩토링_2.png" height='200px'>
 
 어떤 테스트가 성공했는지, 실패했는지, 시간은 얼마나 걸렸는지 분별하기 힘듭니다. 처음 이렇게 네이밍한 이유는 domain package 안에 service, repository가 공통적으로 있으니 오히려 domain+ServiceTest와 같이 작성하는 것이 번거롭다고 생각했었습니다. 하지만 테스트 결과 분석이 어렵기 때문에 구체적으로 작성할 필요가 있었습니다.
 
@@ -55,11 +56,11 @@ Repository 또는 Service 테스트를 하려면 필연적으로 데이터베이
 
 resources에 data.sql 파일을 생성해주고 아래와 같이 필요한 데이터를 생성할 수 있는 query를 정의했습니다.
 
-<img src="./resource/image/테스트코드리팩토링_4.png" height='500px'>
+<img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/테스트코드리팩토링_4.png" height='500px'>
 
 이제 application을 실행하고, 데이터베이스를 확인할 차례입니다. 잘 저장되었습니다 :)
 
-<img src="./resource/image/테스트코드리팩토링_3.png" height='50px'>
+<img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/테스트코드리팩토링_3.png" height='50px'>
 
 이제 테스트를 위해 필요한 데이터가 마련되었으므로, 불필요한 로직을 제거할 수 있습니다! 테스트 클래스마다 존재했던 memberService bean과 TestObjectUtils 클래스를 제거했습니다.
 
@@ -97,7 +98,7 @@ public void 자기소개서_저장() throws IOException {
 ```java
 @Test
 @DisplayName("자기소개서를 저장하면, 문항도 저장되어야 한다")
-public void coverletterSaveTest2() {{}
+public void coverletterSaveTest2() {}
 
 @Test
 @DisplayName("자기소개서를 저장하면, 태그도 저장되어야 한다")
