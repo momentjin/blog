@@ -353,6 +353,7 @@ public OAuth2AuthorizedClientService authorizedClientService() {
 `OAuth2LoginAuthenticationFilter`를 보면 인증을 마친 후 successfulAuthentication() 메소드를 오버라이딩해서 확장하려고 했습니다만, 문제가 생겼습니다. `OAuth2LoginAuthenticationFilter`를 상속하는 CustomFilter를 만들고, Bean으로 설정했더니 `AuthenticationManager` NULL 오류가 발생했습니다.
 
 **원인**
+
 기본 설정을 이용할 때는 `AuthenticationManager` 인터페이스를 구현한 `ProvideManager`에서 OAuth2 관련 3개의 Provider가 내부적으로 생성될 수 있도록 설정 클래스가 동작하는데, 확장하게 되면 설정 클래스가 동작하지 않았던 것이 원인이었습니다. (설정 클래스가 동작하기 전에, Bean을 생성하므로 NULL 참조)
 
 **해결**
