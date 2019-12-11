@@ -237,7 +237,7 @@ Spring Security에서 제공하는 OAuth Client 의존성을 추가하면, 위�
 
 3. Resource 접근을 위한 access_token 등 유저 정보의 저장
 
-    아까 살펴본 코드입니다. 코드의 맨 아래 쪽에 `this.authorizedClientService.saveAuthorizedClient()` 메소드를 호출하는 코드가 있습니다. 이 코드는 인증 정보를 저장하기 위한 코드로써, 실제 구현체인 `InMemoryOAuth2AuthorizedClientService`의 메소드(saveAuthorizedClient)를 호출합니다. 클래스 이름만 봐도 알 수 있듯이 InMemory 타입입니다. 따라서 InMemoryOAuth2AuthorizedClientService 클래스가 아닌 별도의 구현체가 필요함을 알 수 있습니다.
+    아까 살펴본 코드입니다. 코드의 맨 아래 쪽에 `this.authorizedClientService.saveAuthorizedClient()` 메소드를 호출하는 코드가 있습니다. 이 코드는 인증 정보를 저장하기 위한 코드로써, 실제 구현체인 `InMemoryOAuth2AuthorizedClientService`의 메소드(saveAuthorizedClient)를 호출합니다. 클래스 이름만 봐도 알 수 있듯이 InMemory 타입입니다. 따라서 데이터베이스에 저장하기 위해 별도의 구현체가 필요함을 알 수 있습니다.
 
     ```java
     // access token 요청을 위한 전반적인 처리를 담당하고 있는 Filter
@@ -260,7 +260,7 @@ Spring Security에서 제공하는 OAuth Client 의존성을 추가하면, 위�
 
 1. 대부분 자동화가 된 것을 확인했으니, 크게 건드려야할 부분은 없다고 판단된다.
 2. authorizedClientService.saveAuthorizedClient() 메소드를 분석한 결과, 기본 설정값에서는 InMemory 상태로 인증 결과를 저장함을 알 수 있다. 따라서 `InMemoryOAuth2AuthorizedClientService.class`를 분석하면 충분히 확장할 수 있어 보인다.
-3. `OAuth2LoginAuthenticationFilter` 마지막에 `successfulAuthentication` 메소드가 제공되기 때문에 OAuth2 인증 후 JWT 발급을 위해 이 메소드를 확장하면 된다. (이건 위에서 따로 설명하지 않았습니다ㅜ)
+3. `OAuth2LoginAuthenticationFilter` 마지막에 (구체적으로 상위 클래스 `AbstractAuthenticationProcessingFilter`) `successfulAuthentication` 메소드가 제공되기 때문에 OAuth2 인증 후 JWT 발급을 위해 이 메소드를 확장하면 OAuth2 인증 종료 후 JWT 발급하도록 확장할 수 있을 것 같다. 
 
 커스터마이징을 위한 준비가 모두 끝났습니다. 이제 커스터마이징 하겠습니다.
 
@@ -270,14 +270,14 @@ Spring Security에서 제공하는 OAuth Client 의존성을 추가하면, 위�
 
 커스터마이징에 앞서 OAuth2를 이용한 구현 목표가 무엇인지 짚고 넘어가겠습니다.
 
-1. OAuth2 로그인 후, 사용자의 access_token을 포함한 기타 정보를 데이터베이스에 저장할 수 있어야 한다.
-2. OAuth2 로그인 후, 사용자의 id, name 정보를 이용해 JWT를 생성하고 발급할 수 있어야 한다.
+1. OAuth2 로그인 후, 사용자의 access_token을 포함한 기타 정보를 `데이터베이스`에 저장할 수 있어야 한다.
+2. OAuth2 로그인 후, 사용자의 id, name 정보를 이용해 `JWT`를 발급할 수 있어야 한다.
 
 ### 커스터마이징 과정
 
 #### 데이터베이스에 인증 정보 저장하기
 
-데이터베이스에 인증 정보 저장하는 것은 생각보다 간단합니다. Spring OAuth2 Client 동작 원리-3번 섹션에서 authorizedClientService가 인증 정보를 저장하는 책임을 갖고 있다는 사실을 알았습니다. 해당 객체의 인터페이스는 `OAuth2AuthorizedClientService`입니다. 따라서 확장을 원하는 경우 해당 인터페이스를 구현한 구현 클래스를 생성하면 됩니다.
+생각보다 간단하게 데이터베이스에 인증 정보를 저장할 수 있습니다. Spring OAuth2 Client 동작 원리-3번 섹션에서 authorizedClientService가 인증 정보를 저장하는 책임을 갖고 있다는 사실을 알았습니다. 해당 객체의 인터페이스는 `OAuth2AuthorizedClientService`입니다. 따라서 확장을 원하는 경우 해당 인터페이스를 구현한 구현 클래스를 생성하면 됩니다.
 
 ```java
 // 인증 정보 저장을 위한 표준 인터페이스
@@ -343,11 +343,8 @@ public OAuth2AuthorizedClientService authorizedClientService() {
 }
 ```
 
-`MyOAuth2AuthorizedClientSerivce` 클래스는 아래와 같이 2가지 문제가 있습니다. 
-1. 카카오라는 Provider에 종속적인 로직
-2. Refresh Token 저장을 위해 또 다시 커스터마이징이 필요
+`MyOAuth2AuthorizedClientSerivce` 클래스는 문제가 많습니다. 카카오라는 Provider에 종속적인 로직이 첫 번째 문제고, Refresh Token 저장을 위해 또 다시 커스터마이징이 필요하다는 점입니다. 문제가 많긴 하지만 우선은 넘어갔습니다.
 
-우선은 넘어가도록 하겠습니다.. 어쨌든 **목표1**은 달성했습니다!
 
 #### OAuth2 인증 완료시 JWT 발급하기
 
@@ -360,7 +357,7 @@ public OAuth2AuthorizedClientService authorizedClientService() {
 
 **해결**
 
-엄청난 삽질 결과 SuccessHandler를 설정할 수 있는 Setter를 발견했습니다. "다른 것 처럼 상속해서 확장해야지"라는 편협된 생각이 몇 시간의 삽집을 하게 만들었네요..후.. 반성합니다. (아래 코드는 아직 개선해야할 부분이 많으니 참고만 부탁드립니다)
+엄청난 삽질 결과 SuccessHandler를 설정할 수 있는 Setter를 발견했습니다. 아까 OAuth 인증 정보를 저장하는 확장 클래스처럼 `상속해서 확장해야지` 라는 편협된 생각이 몇 시간의 삽집을 하게 만들었네요..후.. 반성합니다. (아래 코드는 아직 개선해야할 부분이 많으니 참고만 부탁드립니다)
 
 ```java
 @EnableWebSecurity
