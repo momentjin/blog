@@ -75,7 +75,7 @@ public class DefaultOAuth2UserService implements OAuth2UserService<OAuth2UserReq
 }
 ```
 
-![api response](../resource/image/oauth_result_1.png)
+<img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/oauth_result_1.png" width="400px">
 
 위 코드와 userAttribute의 응답값을 캡쳐한 이미지를 보시면, api 응답값을 파싱했다는 사실을 알 수 있습니다. 그렇다면 우리는 OAuth2 타입에 따라 적절한 맵핑 객체를 선택하고 생성하는 방법이 있을 수도 있겠다는 의문을 가져볼만 합니다. (예를 들어 OAuth2 요청 Provider가 Kakao라면 KakaoUserResponse 클래스를 생성하는 방법, 우리가 흔히 API Request를 DTO로 맵핑하는 Jackson 처럼요!)
 
