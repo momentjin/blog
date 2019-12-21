@@ -2,7 +2,7 @@
 
 ## 개요
 
-현재 rezoom-backend에는 자기소개서 마감일을 알려줄 때, Email만 이용합니다. 더 추가할만한 플랫폼을 생각해보다가 `Kakao 나에게 보내기 API`가 있다는 것을 알게 되어, 우선 Kakao Login API를 연동하기로 했습니다만, 문제가 발생했습니다. 기존에는 토이 프로젝트의 단순성을 위해 Spring Security + id 및 password 기반 인증 + JWT 인증 프로세스를 구축했습니다. 이런 상황에서 OAuth2를 끼워 맟추려니, 튜토리얼을 따라해도 답이 없는 상황이 되었습니다. (물론 어떻게든 끼워 맞출 수는 있지만, 저의 경우에는 프레임워크가 제공해주는 범위 내에서 구현하고 싶었습니다)
+현재 Rezoom API Server에는 자기소개서 마감일을 알려줄 때, Email만 이용합니다. 더 추가할만한 플랫폼을 생각해보다가 `Kakao 나에게 보내기 API`가 있다는 것을 알게 되어, 우선 Kakao Login API를 연동하기로 했습니다만, 문제가 발생했습니다. 기존에는 토이 프로젝트의 단순성을 위해 Spring Security + ID/PW + JWT 인증 프로세스를 구축했습니다. 이런 상황에서 OAuth2를 끼워 맟추려니, 튜토리얼을 따라해도 답이 없는 상황이 되었습니다. (물론 어떻게든 끼워 맞출 수는 있지만, 저의 경우에는 프레임워크가 제공해주는 범위 내에서 구현하고 싶었습니다)
 
 이 문제를 해결하기 위해 커스터마이징을 해야 하는데, Spring Security에 대한 이해 없이 불가능할 것 같아 이번 기회에 Spring Security 동작 원리를 코드 수준에서 학습하려고 합니다. 더불어 OAuth2를 연동한 과정도 정리하려고 합니다.
 
@@ -33,7 +33,7 @@
         }
     ```
 
-3. 로그인 요청이 맞다는 것을 확인한 후에는 attemptAuthentication() 메소드를 호출해서, 해당 사용자가 시스템에 등록된 사용자인지 검증하기 위한 준비 작업을 수행합니다. 마찬가지로 따로 설정을 안했다면, 아래와 같이 작동하게 됩니다. 간단히 설명하자면, Request Parameter 중 'username', 'password'가 key인 Parameter를 가져와서 인증 정보(Token)를 생성합니다. 그 후 AuthenticationManager에 인증 정보를 넘겨 사용자가 시스템에 등록되었는지 판단하는 메소드를 호출합니다.
+3. 로그인 요청이 맞다는 것을 확인한 후에는 attemptAuthentication() 메소드를 호출해서, 해당 사용자가 시스템에 등록된 사용자인지 검증하기 위한 준비 작업을 수행합니다. 마찬가지로 따로 설정하지 않았다면, 아래와 같이 작동하게 됩니다. 간단히 설명하자면, Request Parameter 중 'username', 'password'가 key인 Parameter를 가져와서 인증 정보(Token)를 생성합니다. 그 후 AuthenticationManager에 인증 정보를 넘겨 사용자가 시스템에 등록되었는지 판단하는 메소드를 호출합니다.
 
     ```java
         public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -154,7 +154,7 @@
 
 따라서 OAuth2 전용 Filter를 만들고, OAuth2 매커니즘이 동작하도록 코드를 작성하면 해결할 수 있을 것 같습니다만, 분명히 OAuth2를 제공하는 별도의 프레임워크가 있을 것 입니다. 
 
-따라서 해당 프레임워크의 기능을 추측해본다면 로그인과 마찬가지로 특정 url 및 method와 패턴 매칭을 통해 OAuth2 인증인지 필터링하겠죠? 그 필터가 무엇인지 찾고, 해당 필터에서 시작되는 동작 과정을 분석해서 커스터마이징이 가능한지 살펴보겠습니다.
+따라서 OAuth2 Client 프레임워크의 기능을 추측해본다면 로그인과 마찬가지로 특정 url 및 method와 패턴 매칭을 통해 OAuth2 인증인지 필터링하겠죠? 이제 그 필터가 무엇인지 찾고, 해당 필터에서 시작되는 동작 과정을 분석해서 커스터마이징이 가능한지 살펴보겠습니다.
 
 
 ## Spring OAuth2 Client 동작 원리
@@ -194,7 +194,7 @@ Spring Security에서 제공하는 OAuth Client 의존성을 추가하면, 위�
     
     이 Redirection Url을 또 다시 Filter에서 잡아서 처리해야 합니다. 이 때 동작하는 Filter는 `OAuth2LoginAuthenticationFilter`이고, 별도의 설정을 건드리지 않았다면, CallBack Url이 `/login/oauth2/code/*` 이런 패턴과 일치할 때 동작하게 됩니다. 
     
-    이 필터는 access_token을 요청하기 위해 각종 데이터를 준비하고, AuthenticationManager(ProviderManager)로 위임하는 역할을 맡고 있습니다. (그리고 ProviderManager가 실제로 OAuth2 인증을 담당하는 Provider인 `OAuth2LoginAuthenticationProvider`가 인증하도록 메소드를 호출합니다)
+    이 필터는 access_token을 요청하기 위해 각종 데이터를 준비하고, AuthenticationManager(ProviderManager)로 위임하는 역할을 맡고 있습니다. 그리고 ProviderManager가 실제로 OAuth2 인증을 담당하는 Provider인 `OAuth2LoginAuthenticationProvider`가 인증하도록 메소드를 호출합니다.
 
     ```java
     // access token 요청을 위한 전반적인 처리를 담당하고 있는 Filter
@@ -235,7 +235,7 @@ Spring Security에서 제공하는 OAuth Client 의존성을 추가하면, 위�
 
 3. Resource 접근을 위한 access_token 등 유저 정보의 저장
 
-    아까 살펴본 코드입니다. 코드의 맨 아래 쪽에 `this.authorizedClientService.saveAuthorizedClient()` 메소드를 호출하는 코드가 있습니다. 이 코드는 인증 정보를 저장하기 위한 코드로써, 실제 구현체인 `InMemoryOAuth2AuthorizedClientService`의 메소드(saveAuthorizedClient)를 호출합니다. 클래스 이름만 봐도 알 수 있듯이 InMemory 타입입니다. 따라서 데이터베이스에 저장하기 위해 별도의 구현체가 필요함을 알 수 있습니다.
+    아까 살펴본 코드입니다. 코드의 맨 아래 쪽에 `this.authorizedClientService.saveAuthorizedClient()` 메소드를 호출하는 코드가 있습니다. 이 코드는 인증 정보를 저장하기 위한 코드로써, 실제 구현체인 `InMemoryOAuth2AuthorizedClientService`의 메소드(saveAuthorizedClient)를 호출합니다. 클래스 이름만 봐도 알 수 있듯이 DB에는 저장하지 않는 Service 입니다. 따라서 데이터베이스에 저장하기 위해 별도의 구현체가 필요합니다.
 
     ```java
     // access token 요청을 위한 전반적인 처리를 담당하고 있는 Filter
@@ -341,7 +341,7 @@ public OAuth2AuthorizedClientService authorizedClientService() {
 }
 ```
 
-`MyOAuth2AuthorizedClientSerivce` 클래스는 문제가 많습니다. 카카오라는 Provider에 종속적인 로직이 첫 번째 문제고, Refresh Token 저장을 위해 또 다시 커스터마이징이 필요하다는 점입니다. 문제가 많긴 하지만 우선은 넘어갔습니다.
+`MyOAuth2AuthorizedClientSerivce` 클래스는 문제가 많습니다. 카카오라는 Provider에 종속적인 로직이 첫 번째 문제고, Refresh Token 저장을 위해 또 다시 커스터마이징이 필요하다는 점입니다. 문제가 많긴 하지만 우선은 넘어갔습니다. (다음 포스팅에서 다룰 예정입니다. 또 다시 코드 분석을 해야하기에..)
 
 
 #### OAuth2 인증 완료시 JWT 발급하기
@@ -356,7 +356,7 @@ public OAuth2AuthorizedClientService authorizedClientService() {
 
 **해결**
 
-엄청난 삽질 결과 SuccessHandler를 설정할 수 있는 Setter를 발견했습니다. 아까 OAuth 인증 정보를 저장하는 확장 클래스처럼 `상속해서 확장해야지` 라는 편협된 생각이 몇 시간의 삽집을 하게 만들었네요..후.. 반성합니다. (아래 코드는 아직 개선해야할 부분이 많으니 참고만 부탁드립니다)
+엄청난 삽질 결과 SuccessHandler를 설정할 수 있는 Setter를 발견했습니다. 아까 OAuth 인증 정보를 저장하는 확장 클래스처럼 `상속해서 확장해야지` 라는 편협된 생각이 몇 시간의 삽집을 하게 만들었네요.. (아래 코드는 아직 개선해야할 부분이 많으니 참고만 부탁드립니다)
 
 ```java
 @EnableWebSecurity
@@ -422,6 +422,6 @@ public class MyOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 ## 끝으로
 
-code 분석을 통해 동작 과정을 익히면, 구조가 더 쉽게 이해될 수 있다는 점을 깨달았습니다. 앞으로도 단순히 구글링을 통해 얻은 정보들을 복붙하지 말고, Document 또는 코드를 분석하는 역량을 키워야겠습니다.
+code 분석을 통해 동작 과정을 익히면, 구조가 더 쉽게 이해할 수 있다는 것을 깨달았습니다. 구글링 의존도를 줄이고, Document 또는 코드를 분석하는 역량을 키워야겠습니다.
 
 읽어주셔서 감사합니다. 
