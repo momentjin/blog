@@ -2,16 +2,18 @@ OAuth2를 연동하면서 생긴 디자인 문제를 해결하면서 정리한 �
 
 ## 개요
 
-지난 번에 [토이 프로젝트에 OAuth2를 연동해보자!](./토이%20프로젝트에%20OAuth2를%20연동해보자!%20feat%20Kakao.md)에서 Kakao Login API를 연동했습니다. 당시에는 구현에 급급해서 `작동만 하는 코드`를 작성했었는데요. 이번에는 다른 OAuth2 Provider를 추가하더라도 쉽게 유지보수할 수 있도록 코드를 수정해봤습니다.
+지난 번에 [토이 프로젝트에 OAuth2를 연동해보자!](./토이%20프로젝트에%20OAuth2를%20연동해보자!%20feat%20Kakao.md)에서 Kakao Login API를 연동했습니다. 당시에는 구현에 급급해서 작동만 하는 코드를 작성했었는데요. 이번에는 확장성있는 구조로 수정하는 작업을 해봤습니다 :)
 
 ## 문제 
 
-우선 기존의 문제가 무엇인지 아래 코드를 통해 살펴보겠습니다. 아래 두 개의 메소드는 각각 OAuth2 인증이 성공했을 때 DB에 저장하는 메소드와 OAuth2 인증 후 JWT 토큰 발급하는 메소드입니다. 이 메소드들의 공통적인 문제점은 카카오 로그인 API Response를 파싱하는 코드가 있다는 것 입니다. 그렇다면 아래와 같은 문제가 발생할 것 입니다.
-- 만약 다른 OAuth2 Provider가 추가되면, 이 코드도 수정되어야 하는 문제가 생깁니다. 아래 두개 메소드는 각각 DB에 저장하거나, JWT를 발급하는 책임이 있을 뿐 해당 유저가 OAuth 유저인지, 그렇다면 Kakao인지 Facebook인지, 아니면 일반유저인지 전혀 관심 없습니다.
+우선 기존의 문제가 무엇인지 아래 코드를 통해 살펴보겠습니다. 아래 두 개의 메소드에 공통적인 문제가 있습니다. 바로 카카오 로그인 API Response를 파싱하는 코드가 문제의 원인입니다. 이로 인해 아래와 같은 문제가 발생할 수 있습니다.
+- 만약 다른 OAuth2 Provider가 추가되면, 이 코드도 수정되어야 하는 문제가 생깁니다. 아래의 메소드들은 각각 DB에 저장하거나, JWT를 발급하는 책임이 있을 뿐 해당 유저가 OAuth 유저인지, 그렇다면 Kakao인지 Facebook인지, 아니면 일반유저인지 전혀 관심 없습니다.
 - 카카오 API 자체가 변경되었을 때, 이 코드도 수정되어야 합니다. 이유는 위와 같습니다.
 
+> 위 메소드의 변화가 왜 문제일까요? 바로 객체지향 원칙 중 **개방 폐쇄의 법칙(OCP)**을 위반하기 때문입니다. 개방 폐쇄의 법칙이란, 클래스는 확장에 열려 있고 변화에는 닫혀 있어야 한다는 원칙입니다. 따라서 이 규칙을 따른다면, Kakao API Response에 의존하는 것이 아닌, 다수의 OAuth2 Provider에 유연하게 대응할 수 있어야 합니다.
 
 ```java
+// OAuth2 인증이 성공했을 때, DB에 값을 저장하는 메소드
 public void saveAuthorizedClient(OAuth2AuthorizedClient oAuth2AuthorizedClient, Authentication authentication) {
     String providerType = oAuth2AuthorizedClient.getClientRegistration().getRegistrationId(); // kakao
     OAuth2AccessToken accessToken = oAuth2AuthorizedClient.getAccessToken(); 
@@ -32,7 +34,10 @@ public void saveAuthorizedClient(OAuth2AuthorizedClient oAuth2AuthorizedClient, 
 
     memberRepository.save(member);
 }
+```
 
+```java
+// OAuth2 인증이 성공했을 때, JWT 토큰을 발급하는 메소드
 public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication authentication) {
     String id = authentication.getName();
 
@@ -50,22 +55,23 @@ public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse 
 }
 ```
 
-위 메소드의 변화가 왜 문제일까요? 바로 객체지향 원칙 중 `개방 폐쇄의 법칙(OCP)`을 위반하기 때문입니다. 개방 폐쇄의 법칙이란, 클래스는 확장에 열려 있고 변화에는 닫혀 있어야 한다는 원칙입니다. 따라서 이 규칙을 따른다면, Kakao API Response에 의존하는 것이 아닌, 다수의 OAuth2 Provider에 유연하게 대응할 수 있어야 합니다.
+
 
 ## 해결
 
 ### 문제 해결 방법 찾기
 
-먼저 이 문제를 해결하기 위한 간단한 방법이 있는지 생각해보겠습니다. 응답값을 파싱하는 부분을 별도의 클래스로 추출, 위임하면 쉽게 풀릴 것 같습니다. 하지만 이렇게 할거면 포스팅 안했겠죠? 분명히 별도로 지원해주는 무언가가 있을 것이라고 생각합니다. 그래서 OAuth2 인증 과정을 다시 한 번 자세히 살펴보았고, 아래와 같은 코드를 발견했습니다.
+먼저 이 문제를 해결하기 위한 간단한 방법이 있는지 생각해보겠습니다. 응답값을 파싱하는 부분을 별도의 클래스로 추출, 위임하면 쉽게 풀릴 것 같습니다. 하지만 이렇게 할거면 포스팅 안했겠죠? 분명히 프레임워크 측에서 지원해주는 무언가가 있을 것이라고 생각합니다. 그래서 OAuth2 인증 과정을 다시 한 번 자세히 살펴보았고, 아래와 같은 클래스를 발견했습니다.
 
 ```java
+// 어떠한 설정도 하지 않았을 때, 기본값으로 사용되는 DefaultOAuth2UserService.class
 public class DefaultOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // ... 생략
         ParameterizedTypeReference<Map<String, Object>> typeReference = new ParameterizedTypeReference<Map<String, Object>>(){};
 
-        // OAuth2 회원 정보 조회 API의 Reponse를 파싱하는 코드
+        // OAuth2 회원 정보 조회 API의 Response를 파싱하는 코드
         Map<String, Object> userAttributes = (Map)this.userInfoResponseClient.getUserInfoResponse(userRequest, typeReference);
         GrantedAuthority authority = new OAuth2UserAuthority(userAttributes);
         Set<GrantedAuthority> authorities = new HashSet();
@@ -77,11 +83,11 @@ public class DefaultOAuth2UserService implements OAuth2UserService<OAuth2UserReq
 
 <img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/oauth_result_1.png" width="400px">
 
-위 코드와 userAttribute의 응답값을 캡쳐한 이미지를 보시면, api 응답값을 파싱했다는 사실을 알 수 있습니다. 그렇다면 우리는 OAuth2 타입에 따라 적절한 맵핑 객체를 선택하고 생성하는 방법이 있을 수도 있겠다는 의문을 가져볼만 합니다. (예를 들어 OAuth2 요청 Provider가 Kakao라면 KakaoUserResponse 클래스를 생성하는 방법, 우리가 흔히 API Request를 DTO로 맵핑하는 Jackson 처럼요!)
+위 코드와 userAttribute 변수를 캡쳐한 이미지를 보면, API Response를 파싱했다는 사실을 알 수 있습니다. 그렇다면 우리는 OAuth2 타입에 따라 적절한 맵핑 객체를 선택하고 생성하는 방법이 있을 수도 있겠다는 의문을 가져볼만 합니다. (예를 들어 OAuth2 요청 Provider가 Kakao라면 KakaoUserResponse 클래스를 생성하고 맵핑하는 방법, 우리가 흔히 API Request Data를 DTO로 맵핑하는 Jackson처럼)
 
-우선 관련해서 확장할 수 있는지부터 한 번 알아봐야겠습니다. 아까 위 코드로 돌아가보면 반환 타입이 `DefaultOAuth2User`입니다. 심지어 Class 이름도 `DefaultOAuth2UserService`입니다. 그렇다면 뭔가 커스터마이징할 수 있는 여지를 제공해준 것은 분명하네요.
+우선 관련해서 확장할 수 있는지부터 한 번 알아봐야겠습니다. 아까 위 코드로 돌아가보면 반환 타입이 `DefaultOAuth2User`입니다. 심지어 Class 이름도 `DefaultOAuth2UserService`입니다. 그렇다면 뭔가 커스터마이징할 수 있는 여지가 있다는 건 분명해 보입니다.
 
-[Spring 공식 문서](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/oauth2/client/userinfo/package-tree.html)를 살펴봤더니, `CustomUserTypesOAuth2UserService`라는 클래스를 찾았습니다. 이 클래스는 **Custom OAuth2User Type을 지원**하는 OAuth2UserService의 구현체'라고 합니다. 프레임워크가 알아서 제공해주니 갖다 바치면 되겠네요.
+[Spring 공식 문서](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/oauth2/client/userinfo/package-tree.html)를 살펴봤더니, `CustomUserTypesOAuth2UserService`라는 클래스를 찾았습니다. 이 클래스는 Custom OAuth2User Type을 지원하는 OAuth2UserService의 구현체라고 합니다. 프레임워크가 알아서 제공해주니 이제 갖다 바치면 되겠네요.
 
 ### 적용하기
 
@@ -146,7 +152,7 @@ public class KakaoOAuth2User implements OAuth2User {
 }
 ```
 
-위와 같이 코드를 작성하고, security에 설정했을 때 내부적으로 Client Registration ID와 비교해서 CustomUserType을 사용합니다. kakao의 경우 이전에 OAuth2 연동하면서 kakao라고 설정했기 때문에, 아까 security에 custom user type을 추가했을 때도 "kakao" 문자열을 넘겨준 것입니다.
+위와 같이 코드를 작성하고 security에 설정했을 때, 내부적으로 Client Registration ID와 비교해서 CustomUserType을 사용합니다. kakao의 경우 이전에 OAuth2 연동하면서 kakao라고 설정했기 때문에, 아까 security에 custom user type을 추가했을 때도 "kakao" 문자열을 넘겨준 것입니다. 하드 코딩해서 마음에 너무 안들긴 하지만, 우선 넘어가겠습니다..
 
 아래는 개선된 코드입니다. Kakao API Response에 대한 의존성이 사라졌습니다. 이제 어떤 OAuth2 Provider를 연동하더라도 잘 대응할 수 있습니다. 문제해결 끝!
 
@@ -175,5 +181,7 @@ public void saveAuthorizedClient(OAuth2AuthorizedClient oAuth2AuthorizedClient, 
 ## 끝으로
 
 프레임워크는 진짜 대단합니다. 확장성 + 유연성 넘치는 디자인에 감탄했습니다. 그렇지만 우리 모두 프레임워크는 도구일 뿐이라는 사실과 배경지식이 중요하다는 사실을 잊지 맙시다 :-)
+
+너무 과도하게 미래를 예상하고 설계하는 것도 문제지만, 정말 누가봐도 확실한 미래는 처음 개발할 때부터 그림을 잘 그려야한다고 생각합니다. 그래야 저도 편하고, 함께 업무하는 동료도 편하니까요!
 
 궁금한게 있으시면 언제든 메일 부탁드립니다. 감사합니다.
