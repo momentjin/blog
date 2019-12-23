@@ -1,4 +1,4 @@
-# Factory Pattern
+Factory Pattern에 대해 정리한 글 입니다.
 
 개발을 할 때 누구나 한 번쯤은 다음과 같은 코드를 작성해봤으리라 감히 예상해봅니다.
 ```java

@@ -1,12 +1,11 @@
-# Adapter Pattern
+Adapter Pattern에 대해 정리한 글 입니다. 
+
+## 개요
 
 어댑터를 우리 말로 번역하면, 적응자라는 뜻 입니다. 어댑터는 특히 실생활에서 많이 볼 수 있습니다. 휴대폰을 충전하기 위해 220V 선을 사용하는 충전기 또한 어댑터라고 할 수 있습니다. 어댑터를 사용하는 이유는 다들 아시다시피 호환이 필요하기 때문입니다. 이 패턴을 사용하면, 호환되지 않는 인터페이스를 사용하는 클라이언트를 그대로 활용할 수 있습니다.
 
 Head First Design Pattern에서는 Adapter Pattern을 다음과 같이 정의했습니다.
-
-`
-한 클래스의 인터페이스를 클라이언트에서 사용하고자 하는 다른 인터페이스로 변환하는 패턴
-`
+> 한 클래스의 인터페이스를 클라이언트에서 사용하고자 하는 다른 인터페이스로 변환하는 패턴
 
 ## 실제 경험담
 
@@ -28,19 +27,7 @@ Interface OrderConfirmRequest {
 
 그런데 github사의 주문 API를 시스템에 이식하려니 문제가 발생했습니다. github는 하나의 API에 신규주문, 주문확인 데이터를 모두 제공하더군요. 보통은 신규 주문, 주문 확인, 주문 취소 등 각각에 대해 하나의 API만 제공했었거든요.
 
-첫 번째 대안은 그냥 중복으로 호출하는 방법입니다. 하지만 제가 분명 1개의 API에 2가지 데이터를 모두 제공한다고 했었죠? 그렇게 되면, 두 개의 클래스는 똑같은 API를 2회나 호출하게 됩니다. 즉, 낭비되는 자원이 발생합니다. 실제로 시스템에는 이와 같이 5개 이상의 Request Class가 존재했습니다. 그렇다면 4번의 호출 비용이 낭비되는 셈이죠.
-
-```java
-class GithubOrderNewRequest implements OrderNewRequest {
-    @Override
-    public List<Order> request() { ... }
-}
-
-class GithubOrderConfirmRequest implements OrderConfirmRequest {
-    @Override
-    public List<Order> request() { ... }
-}
-```
+첫 번째 대안은 그냥 중복으로 호출하는 방법입니다. 하지만 분명 1개의 API에 2가지 데이터를 모두 제공한다고 했었죠? 그렇게 되면, 두 개의 클래스는 똑같은 API를 2회나 호출하게 됩니다. 즉, 낭비되는 자원이 발생합니다. 실제로 시스템에는 이와 같이 5개 이상의 Request Class가 존재했습니다. 그렇다면 4번의 호출 비용이 낭비되는 셈이죠.
 
 이를 해결하기 위해 저는 Adapter Pattern을 사용했습니다. 우선 어댑터가 `OpenMarketOrderRequest` 인터페이스를 구현하도록 했습니다. 각각의 주문 API(신규주문, 주문확인)를 제공해야 하기 때문입니다. 그 후 각각의 API가 실제 Github 주문 데이터를 조회 API를 중복호출 하지 않도록, 캐싱하는 방법을 활용해서 구현했습니다. 이렇게 하면 API를 중복으로 호출하지 않고도, 원하는 결과를 가져올 수 있습니다.
 
@@ -95,9 +82,9 @@ class GithubOrderConfirmRequest implements OrderConfirmRequest {
 }
 ```
 
-## 일반적인(?) 다이어그램
+## 다이어그램으로 다시 보자
 
-![uml](../../resource/image/uml-adapter.png)
+![uml](https://raw.githubusercontent.com/momentjin/study/master/resource/image/uml-adapter.png)
 
 위 다이어그램은 책이나, 인터넷에서 쉽게 볼 수 있는 Adapter Pattern의 다이어그램입니다. 클라이언트는 Adapter를 구현한 이식할 대상(Target)을 호출해서 사용합니다. Target에 구성된 Adapter는 Adaptee의 메소드를 대신 호출합니다. 
 

@@ -1,12 +1,13 @@
-# Template Method Pattern
+Template Method Pattern에 대해 정리한 글 입니다. 
 
-Head First Design Patterns 에서는 Template Method Pattern을 다음과 같이 정의했습니다.
+## 개요
 
-`알고리즘의 뼈대를 정의하는 디자인 패턴`
+Head First Design Pattern에서는 Template Method Pattern을 다음과 같이 정의했습니다.
+> 알고리즘의 뼈대를 정의하는 디자인 패턴
 
 템플릿 메소드 패턴은 알고리즘의 뼈대를 정의한 뒤, 서브클래스에서 알고리즘의 여러 단계 중 일부를 재정의하는 방법을 통해 코드의 재사용성을 높이고, 사용자로 하여금 구현해야 할 부분은 제한합니다.
 
-## 흔하고 흔한 예시
+## 흔한 예시
 
 특정 파일 타입으로 된 문서를 데이터베이스에 마이그레이션할 수 있도록 변환하는 Converter를 만드려고 합니다. 이 문서는 자기소개서(Coverletter) 내용이 담겨있습니다.
 

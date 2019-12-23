@@ -1,4 +1,4 @@
-# Iterator Pattern
+Iterator Pattern에 대해 정리한 글 입니다.
 
 Java 언어를 사용하는 개발자라면 Iterator API를 한 번쯤은 접해봤을 것 입니다. Iterator API에서 사용하는 Pattern이 바로 Iterator Pattern입니다.
 
@@ -23,7 +23,7 @@ else if collection == linkedList
 
 Java의 List, Map, Set 등이 구현하는 최상위 API인 Collection Interface는 Iterable Interface를 상속합니다. Iterable Interface는 Iterator 객체를 반환할 수 있는 뼈대 메소드를 제공합니다. 그리고 구체적인 Collection Class에서 각 타입별 구체적인 Iterator 객체를 반환하도록 되어 있습니다. ArrayList와 HashSet API의 코드를 살펴보도록 하죠.
 
-다음은 ArrayList.java의 iterator() 메소드는 상위 클래스의 listIterator()를 호출하고, 해당 메소드는 ListItr라는 Iterator 인스턴스를 반환합니다. 바로 여기서 List의 순회 방법을 정의하고 있는 것 입니다.
+ArrayList.class의 iterator() 메소드는 상위 클래스의 listIterator()를 호출하고, 해당 메소드는 ListItr라는 Iterator 인스턴스를 반환합니다. 바로 여기서 List의 순회 방법을 정의하고 있는 것 입니다.
 
 ```java
 class ArrayList {
@@ -112,4 +112,4 @@ abstract class HashIterator {
 
 ## 마무리
 
-Iterator 패턴은 반복을 추상화한 것이고, 캡슐화한 것 입니다. 한편으로는, 굳이 반복이 아닌 다른 개념이어도 충분히 활용할 수 있는 Design이 될 수도 있겠다는 생각이 듭니다.
+Iterator 패턴은 반복을 추상화하고, 캡슐화한 것 입니다. 한편으로는, 굳이 반복이 아닌 다른 개념이어도 충분히 활용할 수 있는 Design이 될 수도 있겠다는 생각이 듭니다.

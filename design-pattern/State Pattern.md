@@ -1,4 +1,4 @@
-# State Pattern
+State Pattern에 대해 정리한 글 입니다.
 
 Head First Design Patterns 에서는 State Pattern을 다음과 같이 정의했습니다.
 
