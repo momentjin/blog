@@ -1,6 +1,6 @@
 API를 구현할 때, 날짜와 시간 값을 교환하는 쉬운 방법을 정리했습니다.
 
-# 개요
+## 개요
 
 Spring MVC framework 기반에서 API를 구현할 때, 클라이언트에서 전달 받는 날짜 및 시간 문자열 값에 대한 핸들링 노하우를 공유하고자 이 글을 작성했습니다. 제가 무지했을 당시에는 아래와 같이 String 타입으로 날짜와 시간 값을 받아 처리했었습니다. 
 
@@ -48,7 +48,7 @@ public class Deadline {
 
 그래서 날짜 값에 대한 포멧팅을 미리 정의해놓고, API 요청과 응답시 날짜 값에 대한 포멧팅을 강제로 적용하는 법을 찾아봤습니다. 그 결과, Spring에서 제공해주는 Formatter라는 API를 발견했습니다. (pivotal 만세~~)
 
-# Formatter 구현
+## Formatter 구현
 
 우선 Formatter API를 소개하겠습니다. Formatter API의 최상위 인터페이스는 Formatter<T>로써, T를 String으로 변환하는 Printer API와 String을 T로 변환하는 API 총 2가지로 구성되어 있습니다.
 
@@ -107,7 +107,7 @@ public class TestController {
 
 각각 post, get 요청을 해보면 test1 API는 실패, test2 API는 성공함을 알 수 있습니다. 이유는 Spring Boot 2.x는 json 타입의 데이터를 수신할 때 jackson library를 기본 값으로 사용합니다. 따라서 json 타입으로 값을 주고 받을 때는 jackson에 별도로 serializer를 구현해야 합니다. (따라서 jackson을 사용하는 경우 Formatter는 get 방식에서만 작동합니다)
 
-# Serializer 구현
+## Serializer 구현
 
 Serializer는 아래와 같이 구현할 수 있습니다. 
 
@@ -145,6 +145,6 @@ public class JacksonFormattingConfig {
 
 이렇게 한 번 설정해놓으면, 해당 설정을 사용하는 프로젝트 어느 곳에서나 `일관성`있는 날짜, 시간 문자열 값을 LocalDateTime 타입의 변수에 바로 바인딩할 수 있습니다. 확실히 문자열로 받고, 이를 변환하는 기존 방식보다 훨씬 효율적이고 관리하기 쉬워졌습니다.
 
-# 마무리
+## 마무리
 
 같은 고민을 하는 개발자는 반드시 1명 이상은 있는 것 같습니다. 검색하면 해결 방법이 쉽게 나옴에도 불구하고 단순히 String으로 데이터를 전달 받고 처리했던 저 자신을 반성하게 되는 계기였습니다.
