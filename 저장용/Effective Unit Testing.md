@@ -322,3 +322,8 @@ public class DictionaryTest {
 
 피치 못하게 주석을 달아야 한다면? `Why`를 설명하는 주석을 달자. 코드를 그렇게 작성할 수 밖에 없었던 이유, 당위성을 설명해야 한다. 반면에, `What`을 설명하는 주석의 경우는 코드의 가독성이 떨어지는 경우가 많다.
 
+## Reference
+
+Effective Unit Testing
+- 라쎄 코스켈라 지음
+- 한빛미디어
