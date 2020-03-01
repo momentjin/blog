@@ -10,10 +10,10 @@ Intellij에서 QueryDSL를 사용할 때 QClass가 실제 존재함에도 불구
 
 먼저 아래와 같이 Intellij의 File-Project Structure 메뉴를 보면 다음과 같이 'Source Folders'에 java만 있는 것을 확인해볼 수 있습니다. 
 
-![img1](../resource/image/querydsl인식문제1.png)
+![결과](https://github.com/momentjin/study/blob/master/resource/image/querydsl인식문제1.png?raw=true)
 
 다음과 같이 'generated' 폴더를 Sources로 설정하면 IDE가 해당 폴더를 Source로 인식해서 더 이상 오류를 보여주지 않습니다.
 
-![img2](../resource/image/querydsl인식문제2.png)
+![img2](https://github.com/momentjin/study/blob/master/resource/image/querydsl인식문제2.png?raw=true)
 
 이제 신나게 QueryDSL을 사용하면 됩니다.
