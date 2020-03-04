@@ -1,3 +1,8 @@
+<div style="text-align: center;">
+<img src="http://www.hanbit.co.kr/data/books/B1999551123_l.jpg" height=500px>
+</div>
+<br>
+
 Java 8 in Action을 읽고 느낀 점을 간단하게 정리한 글 입니다.
 
 ## 개요
@@ -86,5 +91,5 @@ Java 8은 기존 Java와는 근본적으로 다른 부분들이 정말 많이 �
 ## Reference
 
 Java 8 In Action 
-- 라울-게이브리얼 우르마, 마리오 푸스코, 앨런 마이크로프트 지음
+- 라울-게이브리얼 우르마, 마리오 푸스코, 앨런 마이크로프트
 - 한빛미디어
