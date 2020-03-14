@@ -1,9 +1,7 @@
-# 특정 구역에 포함되는 모든 데이터 찾기
-
-
 ## 개요
 
 Spring Boot, JPA, MySQL과 Spatial Type을 활용해서 특정 구역에 포함되는 데이터를 찾는 방법을 정리했습니다.
+
 
 ## MySQL Spatial Data Type
 
@@ -47,7 +45,7 @@ SQL 설명
 - 따라서 MBRContains(g1, g2)는 g1의 직사각형안에 g2 데이터가 포함되는지 찾는 연산입니다. 
 
 <div style="text-align: center">
-    <img src="../resource/image/mbr_1.png" height=500px>
+    <img src="https://raw.githubusercontent.com/momentjin/study/master/resource/image/mbr_1.png" height=500px>
 </div>
 
 
@@ -64,7 +62,7 @@ SQL 설명
 
 ### 준비
 
-1. Jpa에서 Spatial type을 사용하기 위한 의존성 추가
+(1) Jpa에서 Spatial type을 사용하기 위한 의존성 추가
 
 먼저 필요한 라이브러리에 대한 의존성을 추가해야 합니다. 필요한 라이브러리는 [hibernate-spatial](https://mvnrepository.com/artifact/org.hibernate/hibernate-spatial)입니다. 저는 Gradle을 사용하므로 아래와 같이 build.gradle 파일에 의존성을 추가했습니다.
 
@@ -75,7 +73,7 @@ dependencies {
 }
 ```
 
-2. property 수정하기
+(2) property 수정하기
 
 아래 application.yml 파일에서 database-platform을 `org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect` 값으로 수정해주세요. 그 외 다른 설정들은 각자의 환경에 맞게 작성하시면 됩니다.
 
@@ -91,7 +89,7 @@ spring:
     database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
 ```
 
-3. Entity, Repository 추가
+(3) Entity, Repository 추가
 
 다음과 같이 Entity 및 Repository Class를 생성합니다. Entity에서 Point 타입 선언시 반드시 `org.locationtech.jts.geom` 패키지에 존재하는 Point 클래스를 Import 해주세요. 
 
@@ -125,7 +123,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 }
 ```
 
-3-1 (참고) Point 데이터 DB에 저장하는 방법
+(3-1) (참고) Point 데이터 DB에 저장하는 방법
 
 ```java
 public void saveUser() {
@@ -141,7 +139,7 @@ public void saveUser() {
 }
 ```
 
-4. 기준 좌표에서 북동쪽, 남서쪽으로 nKM 떨어진 좌표 구하는 연산
+(4) 기준 좌표에서 북동쪽, 남서쪽으로 nKM 떨어진 좌표 구하는 연산
 
 특정 위치에서 반경 nKM 이내 모든 데이터를 구하려면 MBR을 구해야 합니다. 아까 그림으로 보셨듯, 대각선을 통해 MBR을 구할 수 있다는 사실을 알았습니다. 하지만 대각선을 구하기 위해서 기준 위치에서 nKM 떨어진 북동쪽 좌표와 남서쪽 좌표가 필요합니다. 이를 구하려면 특정한 공식을 써서 구할 수 있습니다. 
 
