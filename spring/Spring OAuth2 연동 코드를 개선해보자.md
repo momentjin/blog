@@ -65,7 +65,7 @@ public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse 
 
 ```java
 // 어떠한 설정도 하지 않았을 때, 기본값으로 사용되는 DefaultOAuth2UserService.class
-public class DefaultOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public classㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // ... 생략
