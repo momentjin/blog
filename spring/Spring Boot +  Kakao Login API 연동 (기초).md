@@ -1,18 +1,22 @@
-토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 코드는 [Github]()에서 확인할 수 있습니다.
+토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 예제 코드는 [Github]()에서 확인할 수 있습니다.
 
 ## 개요
 
 Spring Boot와 Spring Security를 활용해서 REST 방식으로 카카오 로그인 API를 연동하는 방법을 알아봅니다. 튜토리얼은 다음과 같이 총 2편으로 나눠집니다.
 
-1. [기초]() : Spring Boot + Spring Security + JWT를 활용해 카카오톡 로그인 API를 무식하게 연동해보면서 Spring Security의 기초를 알아봅니다.
+(1) 기초 : Spring Boot + Spring Security + JWT를 활용해 카카오톡 로그인 API를 무식하게 연동해보면서 Spring Security의 기초를 알아봅니다.
 
-2. [심화]() : 기초편에서 발생한 설계적 문제들을 해결하는 과정을 다룹니다. 확장성있는 구조로 리팩토링해서 다른 소셜 로그인을 손쉽게 추가하는 법을 배웁니다.
+(2) [심화]() : 기초편에서 발생한 설계적 문제들을 해결하는 과정을 다룹니다. 확장성있는 구조로 리팩토링해서 다른 소셜 로그인을 손쉽게 추가하는 법을 배웁니다.
+
+요즘 Open API는 대부분 OAuth2 시스템을 사용한 인증/인가 방식을 사용하기 때문에, 당연히 OAuth2에 대해 알고있어야 합니다. OAuth2를 이해하지 못하면, 아래 글에서 소개하는 모든 내용들을 이해하기 어렵습니다. 생활코딩 등 OAuth2에 관해 미리 학습하는 것을 꼭!! 추천드립니다.
 
 ## 개발 환경
 
-- JDK 1.8
-- Spring Boot 2.x, Spring Security
-- spring-security-oauth2-client
+JDK 1.8
+
+Spring Boot 2.x, Spring Security
+
+[spring-security-oauth2-client](https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-client)
 
 ## Spring Security 로그인의 동작 원리
 
@@ -26,11 +30,34 @@ public UsernamePasswordAuthenticationFilter() {
 }
 ```
 
-그렇다면, OAuth2도 별도의 filter를 제공할 수도 있겠다는 생각을 해볼 수 있습니다. spring oauth2 client 라이브러리를 추가하면, 해당 filter를 사용할 수 있습니다.
+그렇다면, OAuth2도 별도의 filter를 제공할 수도 있겠다는 생각을 해볼 수 있습니다. spring oauth2 client 라이브러리를 추가하면, 관련된 filter를 사용할 수 있으니 의존성을 추가해주세요.
+
+[Maven Repository 바로가기](https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-client) 
+
+## Kakao Open API 설정
+
+카카오 Login API를 사용하려면 client Id, Secret 정보가 필요합니다. kakao open api에서 앱을 만든 뒤 플랫폼에 웹을 추가하고, 다음과 같이 client ID와 Secret 값을 확인해주세요.
+
+플랫폼은 웹, 사이드 도메인은 localhost:8080으로 추가해줍니다.
+
+![img](../resource/image/oauth2_kakao_setting4.png)
+
+redirect url도 아래와 같이 설정해주세요.
+
+![img](../resource/image/oauth2_kakao_setting3.png)
+
+REST API키는 client ID로 사용됩니다.
+
+![img](../resource/image/oauth2_kakao_setting1.png)
+
+아래는 Secret Key 입니다.
+
+![img](../resource/image/oauth2_kakao_setting2.png)
+
 
 ## Spring OAuth2 Client 동작 원리
 
-먼저 동작 원리를 알아보기에 앞서서 간단히 카카오 API를 Spring Configuration에 등록해봅시다.
+먼저 동작 원리를 알아보기전에 간단히 카카오 API를 Spring Configuration에 등록해봅시다.
 
 우선 Spring에 OAuth2 Login을 사용하겠다고 알려주기 위해 다음과 같이 클래스를 만들고 설정해줍니다.
 
@@ -148,12 +175,12 @@ public class OAuth2LoginAuthenticationFilter extends AbstractAuthenticationProce
 
 이 필터를 디버깅 해서 access token을 잘 가져오는지 확인해보겠습니다. 다시 처음으로 돌아가서 EndPoint를 호출해봅시다. 브라우저를 열고 주소창에 `http://localhost:8080/oauth2/authorization/kakao`을 입력해서 해당필터가 실행되는 시점에 Break Point를 걸고 확인하면 됩니다.
 
-![oauth2_debug.png](../resource/image/oauth2_debug.png)
+![oauth2_debug.png](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_debug.png)
 
 authenticationResult 값을 살펴보면 아래와 같습니다. access token 뿐만 아니라, 카카오 user 정보 조회 API를 통해 호출한 정보도 갖고 있는 것을 확인할 수 있습니다.
 
 <div style="text-align: center;">
-    <img src="../resource/image/oauth2_response.png" width="400">
+    <img src="https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_response.png" width="400">
 </div>
 
 
@@ -227,7 +254,7 @@ public void saveAuthorizedClient(OAuth2AuthorizedClient oAuth2AuthorizedClient, 
 ```java
 @Bean
 public OAuth2AuthorizedClientService authorizedClientService() {
-return new MyOAuth2AuthorizedClientSerivce();
+    return new MyOAuth2AuthorizedClientSerivce();
 }
 ```
 
@@ -289,7 +316,7 @@ public class MyOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 저장된 인증정보를 꺼내서 무언가를 처리하려 할 때는 다음과 같이 하면 됩니다.
 
-![oauth2_using.png](../resource/image/oauth2_using.png)
+![oauth2_using.png](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_using.png)
 
 
 ## 마무리
