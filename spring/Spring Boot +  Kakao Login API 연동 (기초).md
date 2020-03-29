@@ -6,7 +6,7 @@ Spring Boot와 Spring Security를 활용해서 REST 방식으로 카카오 로�
 
 (1) 기초 : Spring Boot + Spring Security + JWT를 활용해 카카오톡 로그인 API를 무식하게 연동해보면서 Spring Security의 기초를 알아봅니다.
 
-(2) [심화]() : 기초편에서 발생한 설계적 문제들을 해결하는 과정을 다룹니다. 확장성있는 구조로 리팩토링해서 다른 소셜 로그인을 손쉽게 추가하는 법을 배웁니다.
+(2) [심화](https://github.com/momentjin/blog-code/tree/master/social-login) : 기초편에서 발생한 설계적 문제들을 해결하는 과정을 다룹니다. 확장성있는 구조로 리팩토링해서 다른 소셜 로그인을 손쉽게 추가하는 법을 배웁니다.
 
 요즘 Open API는 대부분 OAuth2 시스템을 사용한 인증/인가 방식을 사용하기 때문에, 당연히 OAuth2에 대해 알고있어야 합니다. OAuth2를 이해하지 못하면, 아래 글에서 소개하는 모든 내용들을 이해하기 어렵습니다. 생활코딩 등을 통해 OAuth2에 대해 미리 학습하는 것을 꼭!! 추천드립니다.
 
@@ -184,9 +184,9 @@ authenticationResult 값을 살펴보면 아래와 같습니다. access token �
 </div>
 
 
-### 3. Access Token을 사용해서 사용자의 resource 사용하기
+### 3. Access Token DBd에 저장하기
 
-만약 우리의 서비스에 카카오 API 중 `나에게 보내기 API`를 사용하고 싶다고 가정해봅시다. 이 API를 사용하기 위해선 당연히 access token이 필요합니다. 따라서 소셜 API를 호출하고 싶다면, access token을 계속 알고 있어야 한다는 것을 알 수 있습니다. 즉, access token을 저장해야 합니다.
+만약 우리의 서비스에 카카오 API 중 `나에게 보내기 API`를 사용하고 싶다고 가정해봅시다. 이 API를 사용하기 위해선 access token이 필요합니다. 따라서 Open API를 호출하고 싶다면, access token을 계속 알고 있어야 한다는 것을 알 수 있습니다. 즉, access token을 저장해야 합니다.
 
 아까 디버깅한 `OAuth2LoginAuthenticationFilter` 클래스의 `attemptAuthentication` 메소드 아래 부분을 살펴보면, `this.authorizedClientService.saveAuthorizedClient(authorizedClient, oauth2Authentication);` 라는 코드가 보일 것입니다. 이 코드가 인증정보를 저장하는 역할을 담당하고 있습니다. 
 
@@ -243,9 +243,13 @@ public OAuth2AuthorizedClientService authorizedClientService() {
 }
 ```
 
+DB에 값이 잘 저장되는지 다시 한 번 확인해보겠습니다. OAuth2 인증을 시도하기 위해 `localhost:8080/oauth2/authorization/kakao`를 브라우저 주소창에 입력한 뒤, DB에 접속해서 결과값을 확인합니다. 
+
+![img](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_db.png)
+
 `MyOAuth2AuthorizedClientSerivce` 클래스는 문제가 있습니다. 카카오라는 Provider에 종속적인 로직이 그대로 담겨 있다는 것입니다. 만약에 facebook, google, naver 등 여러 종류의 social 로그인을 추가한다고 가정해봅시다. 그러면 if문으로 분기처리하는 로직이 필요하고, 새로운 provider가 추가될 때마다 코드가 수정되어야 합니다.
 
-하지만 걱정 마세요! [심화편]()에서 확장하기 쉬운 구조로 리팩토링하는 방법을 알려드리겠습니다.
+하지만 걱정 마세요! [심화편](https://github.com/momentjin/blog-code/tree/master/social-login)에서 확장하기 쉬운 구조로 리팩토링하는 방법을 알려드리겠습니다.
 
 ## 로그인 상태 처리 
 
@@ -291,7 +295,7 @@ public class MyOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 }
 ```
 
-눈치채셨을지도 모르지만, 이 역시 kakao라는 provider에 의존하는 문제가 있습니다만 [심화편]()에서 이 문제를 해결할 것입니다.
+눈치채셨을지도 모르지만, 이 역시 kakao라는 provider에 의존하는 문제가 있습니다만 [심화편](https://github.com/momentjin/blog-code/tree/master/social-login)에서 이 문제를 해결할 것입니다.
 
 
 ## 저장된 인증 정보를 사용하는 방법
