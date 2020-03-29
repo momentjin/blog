@@ -1,5 +1,5 @@
 OAuth2를 연동하면서 생긴 디자인 문제를 해결하면서 정리한 글 입니다.
-토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 예제 코드는 [Github]()에서 확인할 수 있습니다.
+토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 예제 코드는 [Github](https://github.com/momentjin/blog-code/tree/social-login-refac)에서 확인할 수 있습니다.
 
 ## 개요
 
@@ -23,7 +23,7 @@ Spring Boot 2.x, Spring Security
 
 지난 번에 [기초](https://momentjin.tistory.com/144)편에서 어떤 문제가 있었을까요? 바로 모든 code가 kakao라는 provider에 의존하고 있다는 점입니다. 아래 코드가 대표적인 예시입니다.
 
-![img](../resource/image/oauth2_refac1.png)
+![img](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_refac1.png)
 
 왜 이게 문제일까요? 변경에는 닫혀있고, 확장에는 열려있어야 한다는 객체지향 원칙을 어기고 있기 때문입니다. 확장에 굉장히 취약한 구조이기 때문에, 향후 다른 social provider를 추가하려면 핵심 코드를 계속해서 수정해야 합니다.
 
@@ -131,7 +131,7 @@ WebSecurityConfig 클래스의 kakao는 KakaoOAuth2User.class를 사용하겠다
 
 이제 우리는 OAuth2User를 상속하는 CustomUserType을 만들었기 때문에, 다형성의 특징을 이용할 수 있습니다. 개선한 코드를 봐주세요. 맨 처음 코드보다 변경에는 닫혀있고, 확장에는 열려있다는 사실을 알 수 있습니다. 
 
-![img](../resource/image/oauth2_refac2.png)
+![img](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_refac2.png)
 
 ## 가정
 

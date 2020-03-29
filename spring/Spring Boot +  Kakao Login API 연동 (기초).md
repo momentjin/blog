@@ -1,4 +1,4 @@
-토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 예제 코드는 [Github](https://github.com/momentjin/blog-code/tree/master/social-login)에서 확인할 수 있습니다.
+토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 예제 코드는 [Github](https://github.com/momentjin/blog-code/tree/social-login)에서 확인할 수 있습니다.
 
 ## 개요
 
