@@ -8,7 +8,7 @@ Spring Boot와 Spring Security를 활용해서 REST 방식으로 카카오 로�
 
 (2) [심화]() : 기초편에서 발생한 설계적 문제들을 해결하는 과정을 다룹니다. 확장성있는 구조로 리팩토링해서 다른 소셜 로그인을 손쉽게 추가하는 법을 배웁니다.
 
-요즘 Open API는 대부분 OAuth2 시스템을 사용한 인증/인가 방식을 사용하기 때문에, 당연히 OAuth2에 대해 알고있어야 합니다. OAuth2를 이해하지 못하면, 아래 글에서 소개하는 모든 내용들을 이해하기 어렵습니다. 생활코딩 등 OAuth2에 관해 미리 학습하는 것을 꼭!! 추천드립니다.
+요즘 Open API는 대부분 OAuth2 시스템을 사용한 인증/인가 방식을 사용하기 때문에, 당연히 OAuth2에 대해 알고있어야 합니다. OAuth2를 이해하지 못하면, 아래 글에서 소개하는 모든 내용들을 이해하기 어렵습니다. 생활코딩 등을 통해 OAuth2에 대해 미리 학습하는 것을 꼭!! 추천드립니다.
 
 ## 개발 환경
 
@@ -40,19 +40,19 @@ public UsernamePasswordAuthenticationFilter() {
 
 플랫폼은 웹, 사이드 도메인은 localhost:8080으로 추가해줍니다.
 
-![img](../resource/image/oauth2_kakao_setting4.png)
+![img](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_kakao_setting4.png)
 
 redirect url도 아래와 같이 설정해주세요.
 
-![img](../resource/image/oauth2_kakao_setting3.png)
+![img](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_kakao_setting3.png)
 
 REST API키는 client ID로 사용됩니다.
 
-![img](../resource/image/oauth2_kakao_setting1.png)
+![img](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_kakao_setting1.png)
 
 아래는 Secret Key 입니다.
 
-![img](../resource/image/oauth2_kakao_setting2.png)
+![img](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_kakao_setting2.png)
 
 
 ## Spring OAuth2 Client 동작 원리
@@ -197,54 +197,53 @@ authenticationResult 값을 살펴보면 아래와 같습니다. access token �
 ```java
 // 인증 정보 저장을 위한 표준 인터페이스
 public interface OAuth2AuthorizedClientService {
-<T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String var1, String var2);
-
-void saveAuthorizedClient(OAuth2AuthorizedClient var1, Authentication var2);
-
-void removeAuthorizedClient(String var1, String var2);
+    <T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String var1, String var2);
+    void saveAuthorizedClient(OAuth2AuthorizedClient var1, Authentication var2);
+    void removeAuthorizedClient(String var1, String var2);
 }
 
 // 직접 생성한 구현 클래스 - 인증 정보를 DB에 저장
 @Component
 public class MyOAuth2AuthorizedClientSerivce implements OAuth2AuthorizedClientService {
 
-private MemberRepository memberRepository;
+    private MemberRepository memberRepository;
 
-@Autowired
-public MyOAuth2AuthorizedClientSerivce(MemberRepository memberRepository) {
-    this.memberRepository = memberRepository;
-}
-
-@Override
-public void saveAuthorizedClient(OAuth2AuthorizedClient oAuth2AuthorizedClient, Authentication authentication) {
-
-    String providerType = oAuth2AuthorizedClient.getClientRegistration().getRegistrationId(); 
-    OAuth2AccessToken accessToken = oAuth2AuthorizedClient.getAccessToken(); 
-
-    String id = authentication.getName();
-
-    LinkedHashMap<String, Object> properties = (LinkedHashMap<String, Object>) ((DefaultOAuth2User)authentication.getPrincipal()).getAttributes().get("properties");
-    String name = (String) properties.get("nickname");
-
-    Member member = Member.builder()
-            .id(id)
-            .name(name)
-            .providerType(providerType)
-            .accessToken(accessToken.getTokenValue())
-            .expiresAt(LocalDateTime.ofInstant(accessToken.getExpiresAt(), ZoneOffset.UTC))
-            .build();
-
-    memberRepository.save(member);
-
-    @Override
-    public void removeAuthorizedClient(String s, String s1) {
-        throw new NotImplementedException();
+    @Autowired
+    public MyOAuth2AuthorizedClientSerivce(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
-
     @Override
-    public <T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String s, String s1) {
-        throw new NotImplementedException();
+    public void saveAuthorizedClient(OAuth2AuthorizedClient oAuth2AuthorizedClient, Authentication authentication) {
+
+        String providerType = oAuth2AuthorizedClient.getClientRegistration().getRegistrationId(); 
+        OAuth2AccessToken accessToken = oAuth2AuthorizedClient.getAccessToken(); 
+
+        String id = authentication.getName();
+
+        LinkedHashMap<String, Object> properties = (LinkedHashMap<String, Object>) ((DefaultOAuth2User)authentication.getPrincipal()).getAttributes().get("properties");
+        String name = (String) properties.get("nickname");
+
+        Member member = Member.builder()
+                .id(id)
+                .name(name)
+                .providerType(providerType)
+                .accessToken(accessToken.getTokenValue())
+                .expiresAt(LocalDateTime.ofInstant(accessToken.getExpiresAt(), ZoneOffset.UTC))
+                .build();
+
+        memberRepository.save(member);
+
+        @Override
+        public void removeAuthorizedClient(String s, String s1) {
+            throw new NotImplementedException();
+        }
+
+
+        @Override
+        public <T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String s, String s1) {
+            throw new NotImplementedException();
+        }
     }
 }
 ```
@@ -310,14 +309,19 @@ public class MyOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 눈치채셨을지도 모르지만, 이 역시 kakao라는 provider에 의존하는 문제가 있습니다만 [심화편]()에서 이 문제를 해결할 것입니다.
 
 
-## 인증이 끝난 뒤,
+## 저장된 인증 정보를 사용하는 방법
 
 드디어 Spring OAuth2 Client의 동작 원리를 모두 살펴봤습니다. 하지만 이 다음부터 어떻게 해야할지 모르시는 분들도 계실 것 같습니다. 우선 Spring Security는 인증을 하면 인증 정보를 SecurityContextHolder 클래스를 통해 메모리에 저장합니다. 
 
-저장된 인증정보를 꺼내서 무언가를 처리하려 할 때는 다음과 같이 하면 됩니다.
+현재 세션 Key로 메모리에 저장된 인증 정보를 꺼내서 무언가를 처리하려 할 때는 다음과 같이 하면 됩니다. Spring에서 알아서 인증 정보를 바인딩해줍니다.
 
 ![oauth2_using.png](https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/oauth2_using.png)
 
+이 외에 코드로 얻는 방법이 있습니다.
+
+```java
+Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+```
 
 ## 마무리
 
