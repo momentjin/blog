@@ -203,52 +203,38 @@ public interface OAuth2AuthorizedClientService {
 }
 
 // 직접 생성한 구현 클래스 - 인증 정보를 DB에 저장
-@Component
-public class MyOAuth2AuthorizedClientSerivce implements OAuth2AuthorizedClientService {
-
-    private MemberRepository memberRepository;
+@Service
+public class MyOAuth2AuthorizedClientService implements OAuth2AuthorizedClientService {
 
     @Autowired
-    public MyOAuth2AuthorizedClientSerivce(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
+    private MemberRepository memberRepository;
 
     @Override
     public void saveAuthorizedClient(OAuth2AuthorizedClient oAuth2AuthorizedClient, Authentication authentication) {
+        String providerType = oAuth2AuthorizedClient.getClientRegistration().getRegistrationId();
+        OAuth2AccessToken accessToken = oAuth2AuthorizedClient.getAccessToken();
 
-        String providerType = oAuth2AuthorizedClient.getClientRegistration().getRegistrationId(); 
-        OAuth2AccessToken accessToken = oAuth2AuthorizedClient.getAccessToken(); 
+        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+        String id = String.valueOf(oauth2User.getAttributes().get("id"));
+        String name = (String) ((LinkedHashMap) ((LinkedHashMap) oauth2User.getAttribute("kakao_account")).get("profile")).get("nickname");
 
-        String id = authentication.getName();
-
-        LinkedHashMap<String, Object> properties = (LinkedHashMap<String, Object>) ((DefaultOAuth2User)authentication.getPrincipal()).getAttributes().get("properties");
-        String name = (String) properties.get("nickname");
-
-        Member member = Member.builder()
-                .id(id)
-                .name(name)
-                .providerType(providerType)
-                .accessToken(accessToken.getTokenValue())
-                .expiresAt(LocalDateTime.ofInstant(accessToken.getExpiresAt(), ZoneOffset.UTC))
-                .build();
-
+        Member member = new Member(id, name, providerType, accessToken.getTokenValue());
         memberRepository.save(member);
+    }
 
-        @Override
-        public void removeAuthorizedClient(String s, String s1) {
-            throw new NotImplementedException();
-        }
+    @Override
+    public <T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String s, String s1) {
+        throw new NotImplementedException();
+    }
 
-
-        @Override
-        public <T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String s, String s1) {
-            throw new NotImplementedException();
-        }
+    @Override
+    public void removeAuthorizedClient(String s, String s1) {
+        throw new NotImplementedException();
     }
 }
 ```
 
-위와 같이 `MyOAuth2AuthorizedClientSerivce` 클래스를 생성해서 @Bean으로 만들었습니다. 이제 `OAuth2LoginAuthenticationFilter` 필터가 해당 Bean을 사용할 수 있도록 아래와 같이 설정해주면 됩니다.
+위와 같이 `MyOAuth2AuthorizedClientService` 클래스를 생성한 뒤, `OAuth2LoginAuthenticationFilter` 필터가 해당 Bean을 사용할 수 있도록 설정해주시면 됩니다.
 
 ```java
 @Bean
@@ -260,7 +246,6 @@ public OAuth2AuthorizedClientService authorizedClientService() {
 `MyOAuth2AuthorizedClientSerivce` 클래스는 문제가 있습니다. 카카오라는 Provider에 종속적인 로직이 그대로 담겨 있다는 것입니다. 만약에 facebook, google, naver 등 여러 종류의 social 로그인을 추가한다고 가정해봅시다. 그러면 if문으로 분기처리하는 로직이 필요하고, 새로운 provider가 추가될 때마다 코드가 수정되어야 합니다.
 
 하지만 걱정 마세요! [심화편]()에서 확장하기 쉬운 구조로 리팩토링하는 방법을 알려드리겠습니다.
-
 
 ## 로그인 상태 처리 
 
