@@ -1,4 +1,4 @@
-토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 예제 코드는 [Github]()에서 확인할 수 있습니다.
+토이프로젝트에 Kakao Login API를 연동한 과정을 튜토리얼 형식으로 작성한 글 입니다. 이 글에서 다뤄지는 모든 예제 코드는 [Github](https://github.com/momentjin/blog-code/tree/master/social-login)에서 확인할 수 있습니다.
 
 ## 개요
 
@@ -6,7 +6,7 @@ Spring Boot와 Spring Security를 활용해서 REST 방식으로 카카오 로�
 
 (1) 기초 : Spring Boot + Spring Security + JWT를 활용해 카카오톡 로그인 API를 무식하게 연동해보면서 Spring Security의 기초를 알아봅니다.
 
-(2) [심화](https://github.com/momentjin/blog-code/tree/master/social-login) : 기초편에서 발생한 설계적 문제들을 해결하는 과정을 다룹니다. 확장성있는 구조로 리팩토링해서 다른 소셜 로그인을 손쉽게 추가하는 법을 배웁니다.
+(2) [심화]() : 기초편에서 발생한 설계적 문제들을 해결하는 과정을 다룹니다. 확장성있는 구조로 리팩토링해서 다른 소셜 로그인을 손쉽게 추가하는 법을 배웁니다.
 
 요즘 Open API는 대부분 OAuth2 시스템을 사용한 인증/인가 방식을 사용하기 때문에, 당연히 OAuth2에 대해 알고있어야 합니다. OAuth2를 이해하지 못하면, 아래 글에서 소개하는 모든 내용들을 이해하기 어렵습니다. 생활코딩 등을 통해 OAuth2에 대해 미리 학습하는 것을 꼭!! 추천드립니다.
 
@@ -249,7 +249,7 @@ DB에 값이 잘 저장되는지 다시 한 번 확인해보겠습니다. OAuth2
 
 `MyOAuth2AuthorizedClientSerivce` 클래스는 문제가 있습니다. 카카오라는 Provider에 종속적인 로직이 그대로 담겨 있다는 것입니다. 만약에 facebook, google, naver 등 여러 종류의 social 로그인을 추가한다고 가정해봅시다. 그러면 if문으로 분기처리하는 로직이 필요하고, 새로운 provider가 추가될 때마다 코드가 수정되어야 합니다.
 
-하지만 걱정 마세요! [심화편](https://github.com/momentjin/blog-code/tree/master/social-login)에서 확장하기 쉬운 구조로 리팩토링하는 방법을 알려드리겠습니다.
+하지만 걱정 마세요! [심화편]()에서 확장하기 쉬운 구조로 리팩토링하는 방법을 알려드리겠습니다.
 
 ## 로그인 상태 처리 
 
@@ -295,7 +295,7 @@ public class MyOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 }
 ```
 
-눈치채셨을지도 모르지만, 이 역시 kakao라는 provider에 의존하는 문제가 있습니다만 [심화편](https://github.com/momentjin/blog-code/tree/master/social-login)에서 이 문제를 해결할 것입니다.
+눈치채셨을지도 모르지만, 이 역시 kakao라는 provider에 의존하는 문제가 있습니다만 [심화편]()에서 이 문제를 해결할 것입니다.
 
 
 ## 저장된 인증 정보를 사용하는 방법
