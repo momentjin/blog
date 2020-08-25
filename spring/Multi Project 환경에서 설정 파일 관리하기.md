@@ -9,16 +9,24 @@
 - 운영(prod) 환경 설정 : application-prod
 - 공통 설정 : application.yml
 
+<br>
+
+**[모놀리식 프로젝트에서의 설정파일 구조]**
+
 <div>
 <img src="https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/multi-config-1.png" height=250px>
 </div>
 
+<br>
 
 모놀리식 프로젝트는 위와 같은 설정에서 전혀 문제가 없었습니다. 하지만 멀티 프로젝트로 전환하면서 프로젝트마다 개별적으로 설정을 해야하는 경우가 생겼는데, 설정 코드가 중복되어 관리하기 어려웠습니다.
 
+**[멀티모듈로 변경한 후 설정파일 구조]**
+<br>
 <div>
 <img src="https://raw.githubusercontent.com/momentjin/blog-repository/master/resource/image/multi-config-2.png" height=350px>
 </div>
+<br>
 
 이 문제를 해결하기 위해선 중복 코드를 제거하고, 공통적인 설정을 import를 해야했습니다. 하지만 제가 가진 지식으론 어떻게 import를 해야할지 감이 잡히질 않았습니다.
 
