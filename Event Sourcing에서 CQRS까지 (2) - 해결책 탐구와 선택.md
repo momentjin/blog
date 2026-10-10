@@ -87,7 +87,7 @@
 
 Replay가 알림이나 결제 같은 외부 동작을 다시 실행하지 않도록 구분하는 문제도 남는다. 다음 편에서는 Event Sourcing을 선택하면서 생기는 이벤트 순서와 중복, 형식 변경, Replay 비용과 부수 효과의 문제를 어떻게 다룰지 살펴본다.
 
-## 레퍼런스 모음
+## Reference
 
 - [Martin Fowler, Patterns for Accounting](https://martinfowler.com/eaaDev/AccountingNarrative.html)
 - [Martin Fowler, Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)

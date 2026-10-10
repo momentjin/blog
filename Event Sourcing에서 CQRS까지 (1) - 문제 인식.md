@@ -55,6 +55,6 @@
 
 그렇다고 이 요구가 곧바로 Event Sourcing을 의미하지는 않는다. 기존 테이블에 변경 이력을 추가하는 방법도 있고, 금액 변동을 원장으로 관리하는 방법도 있다. 다음 글에서는 각 방식이 무엇을 해결하고 어떤 부담을 추가하는지 비교한 뒤 저장 모델을 선택한다.
 
-## 레퍼런스 모음
+## Reference
 
 - [Martin Fowler, Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
