@@ -1,6 +1,6 @@
 > 이 시리즈는 가상의 장비 대여 서비스를 통해 저장 모델을 검토합니다. 데이터와 이벤트 이름은 설명을 위한 예시입니다.
 
-[1편](%ED%98%84%EC%9E%AC%20%EC%83%81%ED%83%9C%EC%97%90%EC%84%9C%20Event%20Sourcing%EC%9C%BC%EB%A1%9C%20%281%29%20-%20%EB%AC%B8%EC%A0%9C%20%EC%9D%B8%EC%8B%9D.md)에서는 현재 상태를 덮어쓰면서 변경 과정과 과거 상태, 원래 처리와 정정의 관계를 확인하기 어려워진 문제를 살펴봤다. 이번에는 변경 이력, 원장, Event Sourcing을 비교해 보자. 예시의 시간당 요금은 10,000원으로 고정한다.
+[1편](Event%20Sourcing%EC%97%90%EC%84%9C%20CQRS%EA%B9%8C%EC%A7%80%20%281%29%20-%20%EB%AC%B8%EC%A0%9C%20%EC%9D%B8%EC%8B%9D.md)에서는 현재 상태를 덮어쓰면서 변경 과정과 과거 상태, 원래 처리와 정정의 관계를 확인하기 어려워진 문제를 살펴봤다. 이번에는 변경 이력, 원장, Event Sourcing을 비교해 보자. 예시의 시간당 요금은 10,000원으로 고정한다.
 
 ## 변경 이력을 추가하면 어떨까?
 
@@ -14,7 +14,7 @@
 
 ## 금액 변동을 원장으로 남기면 어떨까?
 
-원장(Ledger)은 금액의 증가와 감소를 항목으로 기록하고 합산해 현재 금액을 설명하는 방식이다. 앞의 예시를 금액 중심으로 표현하면 최초 이용료 80,000원에 −30,000원과 +10,000원의 조정이 추가된다. 기존 항목을 덮어쓰지 않고 조정 항목을 남기므로 이전 기록을 보존하면서 현재 금액의 구성을 확인할 수 있다. [Martin Fowler, Patterns for Accounting](https://martinfowler.com/eaaDev/AccountingNarrative.html)
+원장(Ledger)은 금액의 증가와 감소를 항목으로 기록하고 합산해 현재 금액을 설명하는 방식이다. 앞의 예시를 금액 중심으로 표현하면 최초 이용료 80,000원에 −30,000원과 +10,000원의 조정이 추가된다. 기존 항목을 덮어쓰지 않고 조정 항목을 남기므로 이전 기록을 보존하면서 현재 금액의 구성을 확인할 수 있다.
 
 ![변경 타입과 증감액 및 사유를 기록한 원장](https://raw.githubusercontent.com/momentjin/blog/main/assets/state-to-event-sourcing-02/ledger-records-v2.png)
 
@@ -40,15 +40,31 @@
 
 ## 업무 사실을 이벤트로 저장하면 어떨까?
 
-### 이벤트 원장으로 현재 상태를 만든다
+### 대여 계약과 일별 이용 내역을 각각 원장으로 남긴다
 
-앞에서 확장한 업무 원장을 이벤트 테이블로 구체화해 보자. 대여 시작, 이용 내역 기록, 이용 시간 정정, 반납과 취소를 하나의 `RentalEvent`에 쌓는다. 각 이벤트에는 상태를 만드는 데 필요한 입력과 처리자, 기록 시각을 남긴다. 예시의 시간당 요금은 계속 10,000원이며, 반납과 취소는 이용 시간을 바꾸지 않고 잘못 기록된 반납 상태만 정정하는 경우다.
+앞에서 확장한 업무 원장을 이벤트 테이블로 구체화해 보자. 대여 계약의 변경은 `RentalEvent`에, 일별 이용 내역의 변경은 `DailyUsageEvent`에 기록한다. 두 테이블 모두 상태를 만드는 원본이다. Event Sourcing이라고 해서 모든 업무 사실을 하나의 테이블에 넣어야 하는 것은 아니다.
 
-![대여 시작과 이용 시간 정정, 반납 및 취소가 기록된 RentalEvent 예시](https://raw.githubusercontent.com/momentjin/blog/main/assets/state-to-event-sourcing-02/rental-event-store.png)
+대여 시작, 반납과 반납 취소는 계약 원장에 쌓는다. 반납 취소는 잘못 기록한 반납 상태만 바로잡는 경우로, 이용 시간은 바꾸지 않는다.
 
-이 테이블을 원본으로 삼고 계약별 이벤트를 순서대로 적용한다. 대여 시작과 반납, 취소 이벤트에서는 현재 대여 상태를 얻고, 이용 내역 기록과 이용 시간 정정 이벤트에서는 날짜별 이용 시간을 얻는다. 예시의 이용 시간은 8시간에서 5시간, 다시 6시간으로 바뀌므로 최종 이용 내역은 6시간과 이용료 60,000원이 된다. 1편의 `DailyUsage`로 보여줬던 일별 이용 내역을 이제 이벤트에서 계산해 얻는 것이다. 이벤트를 다시 읽고 적용하는 과정을 Replay라고 하며, 이렇게 얻은 상태를 조회 편의를 위해 저장하더라도 이벤트로 다시 만들 수 있는 결과로 다룬다. [Martin Fowler, Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
+![대여 시작과 반납 및 취소를 저장한 RentalEvent 원장](https://raw.githubusercontent.com/momentjin/blog/main/assets/state-to-event-sourcing-02/rental-contract-event-ledger.png)
 
-![대여 상태 이벤트와 이용 시간 이벤트에서 현재 대여 상태 및 일별 이용 내역을 얻는 흐름](https://raw.githubusercontent.com/momentjin/blog/main/assets/state-to-event-sourcing-02/rental-event-results-flow.png)
+이용 내역의 최초 기록과 이용 시간 정정은 별도의 이용 원장에 쌓는다. 각 이벤트는 어떤 이용 내역에 대한 변경인지와 소속 계약을 함께 식별한다.
+
+![이용 내역의 최초 기록과 시간 정정을 저장한 DailyUsageEvent 원장](https://raw.githubusercontent.com/momentjin/blog/main/assets/state-to-event-sourcing-02/daily-usage-event-ledger.png)
+
+### 두 원장을 함께 읽어 대여 애그리거트를 만든다
+
+대여 애그리거트를 조회할 때는 해당 계약의 두 원장을 모두 읽고, 이벤트 시각순으로 합쳐 적용한다. 이 예시에서는 `recorded_at`을 정렬 기준으로 삼는다. 계약 이벤트로 대여 상태를 만들고, 이용 이벤트로 일별 이용 내역을 구성한다. 반납이 취소되어 대여 상태는 `RENTED`가 되고, 최종 이용 시간 6시간에 계약의 시간당 요금 10,000원을 적용하면 이용료는 60,000원이 된다.
+
+![두 원장의 이벤트를 기록 시각순으로 적용해 Rental과 DailyUsage의 최신 상태를 구성하는 흐름](https://raw.githubusercontent.com/momentjin/blog/main/assets/state-to-event-sourcing-02/rental-two-ledgers-current-state.png)
+
+이처럼 이벤트를 다시 읽고 적용하는 과정을 Replay라고 한다. 원본 기록은 두 테이블에 나뉘어 있지만, 이를 함께 읽어 하나의 애그리거트 상태를 구성할 수 있다. 최신 상태를 조회 편의를 위해 저장하더라도, 원장으로 다시 만들 수 있는 결과로 다룬다.
+
+### 일별 이용 내역만 조회한다면?
+
+특정 일별 이용 내역만 필요하다면 해당 `usage_id`의 `DailyUsageEvent`를 순서대로 적용한다. 이용 시간이 8시간에서 5시간, 다시 6시간으로 정정된 과정과 최신 이용 시간을 이 원장만으로 확인할 수 있다. 이용료는 여기에 계약의 시간당 요금을 적용해 계산한다. **이용 시간의 원본은 이용 원장에, 요금의 원본은 계약 원장에 있다.**
+
+![DailyUsageEvent에서 이용 시간을 복원하고 계약 요금을 적용해 DailyUsage의 최신 상태를 계산하는 흐름](https://raw.githubusercontent.com/momentjin/blog/main/assets/state-to-event-sourcing-02/daily-usage-current-state.png)
 
 ### 기존 구조와 무엇이 달라졌나?
 
@@ -60,13 +76,19 @@
 | 과거 특정 시점의 상태가 사라졌다. | 해당 시점까지 기록된 이벤트만 적용하면 된다. 이후 정정이 반영된 현재 값과 당시 기록된 값을 구분할 수 있다. |
 | 어떤 처리를 취소하거나 정정했는지 알기 어려웠다. | 원래 이벤트를 보존하고, 취소 이벤트가 대상 반납을 가리킨다. 이전 기록을 지우지 않아 정정 대상과 근거가 남는다. |
 | 상태는 바뀌었지만 보조 이력은 빠질 수 있었다. | 이벤트 저장을 업무 변경의 확정으로 삼는다. 이벤트가 저장되지 않은 변경은 완료된 상태로 취급하지 않아, 상태 갱신과 이력 추가를 별도로 챙기던 경로를 없앤다. |
-| 금액 증감만 담은 원장으로는 반납과 취소를 설명하기 어려웠다. | 금액 변동이 없는 업무 사실도 같은 이벤트 원장에 쌓고, 대여 상태를 바꾸는 입력으로 사용한다. |
+| 금액 증감만 담은 원장으로는 반납과 취소를 설명하기 어려웠다. | 금액 변동이 없는 업무 사실도 해당 업무의 이벤트 원장에 쌓고, 상태를 바꾸는 입력으로 사용한다. |
 
 
-## 선택과 남은 과제
+## 정리
 
-변경 이력과 원장으로도 필요한 기록을 보존할 수 있다. 우리는 대여와 정정 사실을 상태를 만드는 원본으로 삼고, 현재 값의 근거와 과거 상태, 취소 관계를 같은 기록으로 다루기 위해 Event Sourcing을 선택했다. 현재 상태를 읽는 단순함보다 업무 기록과 상태 변경의 기준을 맞추는 데 무게를 둔 선택이다.
+변경 이력 혹은 원장으로도 필요한 기록을 보존할 수 있다. 우리는 대여와 정정 사실을 상태를 만드는 원본으로 삼고, 현재 값의 근거와 과거 상태, 취소 관계를 같은 기록으로 다루기 위해 Event Sourcing을 선택했다. 현재 상태를 읽는 단순함보다 업무 기록과 상태 변경의 기준을 맞추는 데 무게를 둔 선택이다.
 
-그 대가로 이벤트가 쌓이는 만큼 저장 공간과 Replay의 읽기·계산 비용이 늘어난다. 과거 이벤트를 계속 해석할 수 있도록 형식과 적용 규칙을 관리해야 하고, 잘못된 이벤트는 기존 기록을 덮어쓰기보다 취소나 정정 이벤트로 바로잡아야 한다. 동시 변경과 중복 요청도 별도로 제어해야 한다. 기록을 원본으로 삼는다고 잘못된 사실이나 적용 로직의 버그까지 없어지는 것은 아니다. [Microsoft, Event Sourcing Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)
+그 대가로 이벤트가 쌓이는 만큼 저장 공간과 Replay의 읽기, 계산 비용이 늘어난다. 과거 이벤트를 계속 해석할 수 있도록 관리해야 하고, 잘못된 이벤트는 기존 기록을 덮어쓰기보다 취소나 정정 이벤트로 바로잡아야 한다. 동시 변경과 중복 요청도 별도로 제어해야 한다. 기록을 원본으로 삼는다고 잘못된 사실이나 적용 로직의 버그까지 없어지는 것은 아니다.
 
-Replay가 알림이나 결제 같은 외부 동작을 다시 실행하지 않도록 구분하는 문제도 남는다. 다음 편에서는 Event Sourcing을 선택하면서 생기는 이벤트 순서와 중복, 형식 변경, Replay 비용과 부수 효과의 문제를 어떻게 다룰지 살펴본다. [Martin Fowler, Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
+Replay가 알림이나 결제 같은 외부 동작을 다시 실행하지 않도록 구분하는 문제도 남는다. 다음 편에서는 Event Sourcing을 선택하면서 생기는 이벤트 순서와 중복, 형식 변경, Replay 비용과 부수 효과의 문제를 어떻게 다룰지 살펴본다.
+
+## 레퍼런스 모음
+
+- [Martin Fowler, Patterns for Accounting](https://martinfowler.com/eaaDev/AccountingNarrative.html)
+- [Martin Fowler, Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
+- [Microsoft, Event Sourcing Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)
