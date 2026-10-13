@@ -1,0 +1,422 @@
+{
+  "timestamp_utc": "2026-10-13T03:53:08.942906+00:00",
+  "settings": {
+    "hosts": [
+      "http://localhost:8081",
+      "http://localhost:8082"
+    ],
+    "requests": 1000,
+    "amount": 10000000,
+    "initial_balance": 10000000000,
+    "repeats": 3
+  },
+  "runs": [
+    {
+      "mode": "naive",
+      "round": 1,
+      "requests": 1000,
+      "elapsed_ms": 1992.3,
+      "p50_ms": 1110.0,
+      "p95_ms": 1870.2,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 9830000000,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": false
+    },
+    {
+      "mode": "naive",
+      "round": 2,
+      "requests": 1000,
+      "elapsed_ms": 1849.2,
+      "p50_ms": 984.2,
+      "p95_ms": 1711.1,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 9830000000,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": false
+    },
+    {
+      "mode": "naive",
+      "round": 3,
+      "requests": 1000,
+      "elapsed_ms": 1851.0,
+      "p50_ms": 975.5,
+      "p95_ms": 1717.8,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 9830000000,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": false
+    },
+    {
+      "mode": "atomic",
+      "round": 1,
+      "requests": 1000,
+      "elapsed_ms": 1285.1,
+      "p50_ms": 685.7,
+      "p95_ms": 1191.1,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "atomic",
+      "round": 2,
+      "requests": 1000,
+      "elapsed_ms": 1182.9,
+      "p50_ms": 644.1,
+      "p95_ms": 1094.4,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "atomic",
+      "round": 3,
+      "requests": 1000,
+      "elapsed_ms": 1204.8,
+      "p50_ms": 638.9,
+      "p95_ms": 1108.3,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "optimistic",
+      "round": 1,
+      "requests": 1000,
+      "elapsed_ms": 5774.2,
+      "p50_ms": 3577.4,
+      "p95_ms": 5624.9,
+      "success": 872,
+      "http_errors": 128,
+      "error_samples": [
+        {
+          "latency_ms": 5431.061625,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:32.158Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        },
+        {
+          "latency_ms": 5198.196875000001,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:31.925Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        },
+        {
+          "latency_ms": 5081.505833000001,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:31.810Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        }
+      ],
+      "retries": 33046,
+      "state": {
+        "balance": 1280000000,
+        "version": 872,
+        "withdrawals": 872,
+        "withdrawnAmount": 8720000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "optimistic",
+      "round": 2,
+      "requests": 1000,
+      "elapsed_ms": 5611.4,
+      "p50_ms": 3283.4,
+      "p95_ms": 5500.0,
+      "success": 864,
+      "http_errors": 136,
+      "error_samples": [
+        {
+          "latency_ms": 4874.279667,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:37.488Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        },
+        {
+          "latency_ms": 4839.949666000002,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:37.455Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        },
+        {
+          "latency_ms": 4958.1554590000005,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:37.573Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        }
+      ],
+      "retries": 31929,
+      "state": {
+        "balance": 1360000000,
+        "version": 864,
+        "withdrawals": 864,
+        "withdrawnAmount": 8640000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "optimistic",
+      "round": 3,
+      "requests": 1000,
+      "elapsed_ms": 5588.9,
+      "p50_ms": 3356.0,
+      "p95_ms": 5414.2,
+      "success": 863,
+      "http_errors": 137,
+      "error_samples": [
+        {
+          "latency_ms": 5098.613,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:43.436Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        },
+        {
+          "latency_ms": 5167.814957999997,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:43.506Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        },
+        {
+          "latency_ms": 4954.482875,
+          "http_status": 409,
+          "timestamp": "2026-10-13T03:52:43.293Z",
+          "status": 409,
+          "error": "Conflict",
+          "path": "/api/withdraw/optimistic"
+        }
+      ],
+      "retries": 32417,
+      "state": {
+        "balance": 1370000000,
+        "version": 863,
+        "withdrawals": 863,
+        "withdrawnAmount": 8630000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "pessimistic",
+      "round": 1,
+      "requests": 1000,
+      "elapsed_ms": 3460.0,
+      "p50_ms": 1686.7,
+      "p95_ms": 3248.8,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "pessimistic",
+      "round": 2,
+      "requests": 1000,
+      "elapsed_ms": 3330.8,
+      "p50_ms": 1651.6,
+      "p95_ms": 3130.7,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "pessimistic",
+      "round": 3,
+      "requests": 1000,
+      "elapsed_ms": 3455.2,
+      "p50_ms": 1692.3,
+      "p95_ms": 3238.1,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 0,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "redis",
+      "round": 1,
+      "requests": 1000,
+      "elapsed_ms": 4719.3,
+      "p50_ms": 2652.9,
+      "p95_ms": 4481.1,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 322638,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "redis",
+      "round": 2,
+      "requests": 1000,
+      "elapsed_ms": 4173.5,
+      "p50_ms": 2213.6,
+      "p95_ms": 3949.3,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 301441,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    },
+    {
+      "mode": "redis",
+      "round": 3,
+      "requests": 1000,
+      "elapsed_ms": 4446.3,
+      "p50_ms": 2491.2,
+      "p95_ms": 4238.9,
+      "success": 1000,
+      "http_errors": 0,
+      "error_samples": [],
+      "retries": 318020,
+      "state": {
+        "balance": 0,
+        "version": 1000,
+        "withdrawals": 1000,
+        "withdrawnAmount": 10000000000
+      },
+      "consistent": true
+    }
+  ],
+  "summary": {
+    "naive": {
+      "median_elapsed_ms": 1851.0,
+      "median_p95_ms": 1717.8,
+      "median_retries": 0,
+      "consistent_rounds": 0,
+      "median_final_balance": 9830000000,
+      "median_recorded_withdrawals": 10000000000,
+      "median_http_errors": 0
+    },
+    "atomic": {
+      "median_elapsed_ms": 1204.8,
+      "median_p95_ms": 1108.3,
+      "median_retries": 0,
+      "consistent_rounds": 3,
+      "median_final_balance": 0,
+      "median_recorded_withdrawals": 10000000000,
+      "median_http_errors": 0
+    },
+    "optimistic": {
+      "median_elapsed_ms": 5611.4,
+      "median_p95_ms": 5500.0,
+      "median_retries": 32417,
+      "consistent_rounds": 3,
+      "median_final_balance": 1360000000,
+      "median_recorded_withdrawals": 8640000000,
+      "median_http_errors": 136
+    },
+    "pessimistic": {
+      "median_elapsed_ms": 3455.2,
+      "median_p95_ms": 3238.1,
+      "median_retries": 0,
+      "consistent_rounds": 3,
+      "median_final_balance": 0,
+      "median_recorded_withdrawals": 10000000000,
+      "median_http_errors": 0
+    },
+    "redis": {
+      "median_elapsed_ms": 4446.3,
+      "median_p95_ms": 4238.9,
+      "median_retries": 318020,
+      "consistent_rounds": 3,
+      "median_final_balance": 0,
+      "median_recorded_withdrawals": 10000000000,
+      "median_http_errors": 0
+    }
+  }
+}
