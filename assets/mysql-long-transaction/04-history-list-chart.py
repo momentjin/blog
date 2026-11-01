@@ -78,4 +78,6 @@ text(.109, .123, 'mysql-demo', 12)
 text(.925, .123, '일정한 UPDATE 부하', 11, MUTED, ha='right')
 fig.savefig(OUT / '04-history-list-chart.png', facecolor=BG, dpi=150)
 fig.savefig(OUT / '04-history-list-chart.svg', facecolor=BG)
+svg_path = OUT / '04-history-list-chart.svg'
+svg_path.write_text('\n'.join(line.rstrip() for line in svg_path.read_text().splitlines()) + '\n')
 print(OUT / '04-history-list-chart.png')
