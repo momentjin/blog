@@ -1,0 +1,34 @@
+/* Expand the note body in both editing and reading views. */
+.markdown-source-view.mod-cm6,
+.markdown-preview-view {
+  --file-line-width: 100%;
+  --file-margins: 20px;
+  --blog-image-max-width: 550px;
+}
+
+.markdown-source-view.mod-cm6 .cm-sizer,
+.markdown-preview-view .markdown-preview-sizer {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Keep images centered and capped even when the note body is wide. */
+.markdown-source-view.mod-cm6 .cm-content .image-embed,
+.markdown-preview-view .image-embed {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.markdown-source-view.mod-cm6 .cm-content img,
+.markdown-preview-view img {
+  display: block;
+  max-width: min(100%, var(--blog-image-max-width));
+  height: auto;
+  margin-inline: auto;
+}
+
+.markdown-source-view.mod-cm6 .cm-content img:not([width]),
+.markdown-preview-view img:not([width]) {
+  width: auto;
+}

@@ -1,0 +1,7 @@
+/drafts/
+/archieve/
+/archive/
+.agent/
+.agents/
+.DS_Store
+/.obsidian/workspace*.json
