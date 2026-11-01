@@ -5,3 +5,4 @@
 .agents/
 .DS_Store
 /.obsidian/workspace*.json
+.obsidian/
